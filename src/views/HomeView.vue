@@ -16,8 +16,16 @@
         <div class="data_selected_container">
           <h4>Has seleccionado:</h4>
           <h5 class="day_selected">{{ adviserSelected.day }}</h5>
-          <VueDatePicker v-model="time" time-picker :min-time="minTime" :max-time="maxTime"></VueDatePicker>
-          <h5 class="max_selected">Quedan 5 lugares disponibles</h5>
+          <VueDatePicker 
+            v-model="time"
+            time-picker
+            :is-24="false"
+            :min-time="minTime"
+            :max-time="maxTime"
+            :minutesIncrement="60"
+            :minutes-grid-increment="60"
+          ></VueDatePicker>
+          <h5 class="max_selected">Quedan {{ adviserSelected.availablePlaces }} lugares disponibles</h5>
           <label>No. de cuenta:</label>
           <input type="text" placeholder="número de cuenta">
           <button class="btn btn-green">Reservar</button>
@@ -35,6 +43,8 @@
   import timeGridPlugin from '@fullcalendar/timegrid';
   import interactionPlugin from '@fullcalendar/interaction';
   import moment from 'moment';
+  import 'moment/dist/locale/es';
+  moment.locale('es');
 
   const minTime = { hours: 8, minutes: 0 };
   const maxTime = { hours: 14, minutes: 0 };
@@ -45,7 +55,8 @@
   const adviserSelected = reactive({
     name: '',
     language: '',
-    day: ''
+    day: '',
+    availablePlaces: 5
   });
 
   const calendarOptions = {
@@ -111,8 +122,16 @@
 
       adviserSelected.name = title;
       adviserSelected.language = language;
-      moment.locale('es');
-      adviserSelected.day = moment(start).format('dddd D MMMM');
+
+      adviserSelected.day = moment(start).format('dddd')[0].toUpperCase()
+        + moment(start).format('dddd').substring(1)
+        + " "
+        + moment(start).format('D')
+        + " de "
+        + moment(start).format('MMMM');
+        
+      adviserSelected.availablePlaces = max_places - users_inscribed;
+      document.getElementsByClassName('max_selected')[0].style.display = "block";
     },
     nowIndicator: true,
     allDaySlot: false,
