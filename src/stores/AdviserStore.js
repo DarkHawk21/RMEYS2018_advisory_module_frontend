@@ -1,113 +1,87 @@
 import { defineStore } from 'pinia';
 
 export const useAdviserStore = defineStore('adviser', {
-    state: () => ({
-        adviserSelected: {
-            id: undefined,
-            img: '',
-            name: '',
-            language: '',
-            day: '',
-            timeSelected: {
-                hours: undefined,
-                minutes: undefined
-            },
-            minTime: {
-                hours: undefined,
-                minutes: undefined
-            },
-            maxTime: {
-                hours: undefined,
-                minutes: undefined
-            },
-            timeFinishBasedOnTime: undefined,
-            availablePlaces: 5,
-            studentAccount: ''
+  state: () => ({
+    adviserSelected: {
+      id: undefined,
+      img: '',
+      name: '',
+      language: '',
+      day: '',
+      timeSelected: {
+        hours: undefined,
+        minutes: undefined
+      },
+      minTime: {
+        hours: undefined,
+        minutes: undefined
+      },
+      maxTime: {
+        hours: undefined,
+        minutes: undefined
+      },
+      timeFinishBasedOnTime: undefined,
+      availablePlaces: 5,
+      studentAccount: ''
+    },
+  }),
+  actions: {
+    setAdviserSelected(event, moment) {
+      const { id, title, start, end, extendedProps } = event;
+      const { language, img } = extendedProps;
+      const dayName = moment(start).format("dddd")[0].toUpperCase() + moment(start).format("dddd").substring(1);
+      const dayNumber = moment(start).format("D");
+      const monthName = moment(start).format("MMMM");
+
+      this.adviserSelected = {
+        id,
+        name: title,
+        img: img,
+        language: language,
+        day: `${dayName} ${dayNumber} de ${monthName}`,
+        timeSelected: {
+          hours: parseInt(moment(start).format("HH")),
+          minutes: parseInt(moment(start).format("mm")),
         },
-        calendarEvents: [
-            {
-                id: 1,
-                groupId: 1,
-                title: 'Marco Antonio Hernández Rodríguez',
-                start: '2023-09-14T08:00:00',
-                end: '2023-09-14T15:00:00',
-                backgroundColor: '#cf142b',
-                borderColor: '#cf142b',
-                textColor: "#fff",
-                extendedProps: {
-                    language: 'Inglés',
-                    img: 'profile.png'
-                }
-            },
-            {
-                id: 2,
-                groupId: 2,
-                title: 'Jessica Guadalupe Hernández Rodriguez',
-                start: '2023-09-14T10:00:00',
-                end: '2023-09-14T14:00:00',
-                backgroundColor: '#cf142b',
-                borderColor: '#cf142b',
-                textColor: "#fff",
-                extendedProps: {
-                    language: 'Inglés',
-                    img: 'profile.png'
-                }
-            }
-        ],
-        advicesOnSelectedEvent: [
-            {
-                id: 1,
-                event_id: 1,
-                max_places: 5,
-                total_enrolled_students: 1,
-                hour_start: '09:00:00',
-                hour_end: '10:00:00',
-                date: '2023-09-11',
-                enrolled_students: [
-                    {
-                        id: 1,
-                        advice_id: 1,
-                        name: 'Enrique',
-                        last_name: 'Carranza',
-                        account: '316304034'
-                    }
-                ]
-            }
-        ]
-    }),
-    actions: {
-        setMinTime(minTime) {
-            this.adviserSelected.minTime = minTime;
+        minTime: {
+          hours: parseInt(moment(start).format("HH")),
+          minutes: parseInt(moment(start).format("mm")),
         },
-        setMaxTime(maxTime) {
-            this.adviserSelected.maxTime = maxTime;
+        maxTime: {
+          hours: parseInt(moment(end).format("HH")) - 1,
+          minutes: parseInt(moment(end).format("mm")),
         },
-        setTimeSelected(timeSelected) {
-            this.adviserSelected.timeSelected = timeSelected;
+        timeFinishBasedOnTime: {
+          hours: parseInt(moment(start).format("HH")) + 1,
+          minutes: parseInt(moment(start).format("mm")),
         },
-        clearSelection() {
-            this.adviserSelected = {
-                id: undefined,
-                img: '',
-                name: '',
-                language: '',
-                day: '',
-                timeSelected: {
-                    hours: undefined,
-                    minutes: undefined
-                },
-                minTime: {
-                    hours: undefined,
-                    minutes: undefined
-                },
-                maxTime: {
-                    hours: undefined,
-                    minutes: undefined
-                },
-                timeFinishBasedOnTime: undefined,
-                availablePlaces: 5,
-                studentAccount: ''
-            };
-        }
+        availablePlaces: 5,
+        studentAccount: ''
+      };
+    },
+    clearSelection() {
+      this.adviserSelected = {
+        id: undefined,
+        img: '',
+        name: '',
+        language: '',
+        day: '',
+        timeSelected: {
+          hours: undefined,
+          minutes: undefined
+        },
+        minTime: {
+          hours: undefined,
+          minutes: undefined
+        },
+        maxTime: {
+          hours: undefined,
+          minutes: undefined
+        },
+        timeFinishBasedOnTime: undefined,
+        availablePlaces: 5,
+        studentAccount: ''
+      };
     }
+  }
 });
