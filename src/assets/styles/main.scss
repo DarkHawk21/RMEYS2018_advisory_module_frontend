@@ -133,6 +133,33 @@ body {
                     position: absolute;
                     border-radius: 14px;
                 }
+
+                .data_container_head {
+                    width: 100%;
+                    display: flex;
+                    margin-bottom: 20px;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    h4 {
+                        font-size: 1.4rem;
+                    }
+
+                    button {
+                        color: #fff;
+                        cursor: pointer;
+                        padding: 6px 10px;
+                        font-size: 1.4rem;
+                        border-radius: 7px;
+                        border: 1px solid transparent;
+                        background: rgba(250,0,0,0.5);
+                        transition: ease all 0.25s;
+
+                        &:hover {
+                            background: rgba(250,0,0,1);
+                        }
+                    }
+                }
     
                 .adviser_img_container {
                     width: 150px;
@@ -164,12 +191,7 @@ body {
                     border-bottom: 1px solid #ccc;
                 }
     
-                .data_selected_container {
-                    h4 {
-                        font-size: 1rem;
-                        margin-bottom: 20px;
-                    }
-    
+                .data_selected_container {    
                     .day_selected {
                         font-size: 0.8rem;
                         text-align: center;
@@ -184,7 +206,6 @@ body {
                         font-size: 0.8rem;
                         text-align: center;
                         margin-bottom: 20px;
-                        display: none;
                     }
     
                     label {
