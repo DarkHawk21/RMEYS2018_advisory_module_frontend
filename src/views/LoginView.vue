@@ -1,12 +1,15 @@
 <template>
   <main>
     <div class="form_container">
-      <h1>Iniciar sesión</h1>
-      <label>Correo electrónico:</label>
-      <input type="email" v-model="email" placeholder="asesor@ejemplo.com" />
-      <label>Contraseña:</label>
-      <input type="password" v-model="password" placeholder="********" />
-      <button @click="login">Iniciar sesión</button>
+      <h2 class="align_center">Iniciar sesión</h2>
+
+      <label class="form_label_control">Correo electrónico:</label>
+      <input type="email" v-model="email" placeholder="asesor@ejemplo.com" class="form_control" />
+
+      <label class="form_label_control">Contraseña:</label>
+      <input type="password" v-model="password" placeholder="********" class="form_control" />
+
+      <button @click="login" class="btn w_100">Iniciar sesión</button>
     </div>
   </main>
 </template>

@@ -24,13 +24,11 @@ main {
 }
 
 .form_container {
-  display: flex;
-  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
   position: relative;
-  border-radius: 14px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
+  border-radius: 7px;
   box-shadow: 1px 1px 10px rgba($black, 0.3);
 
   &::before {
@@ -43,43 +41,14 @@ main {
     opacity: 0.8;
     background: $white;
     position: absolute;
-    border-radius: 14px;
-  }
-
-  h1 {
-    font-size: 2rem;
-    align-self: center;
-    margin-bottom: 30px;
-  }
-
-  label {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-  }
-
-  input {
-    width: 100%;
-    padding: 10px;
-    font-size: 1.4rem;
     border-radius: 7px;
-    margin-bottom: 25px;
-    border: 1px solid $defaultBorderColor;
   }
 
-  button {
-    width: 100%;
-    border: none;
-    padding: 10px;
-    color: $white;
-    cursor: pointer;
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  .btn {
     margin-top: 10px;
-    font-size: 1.2rem;
-    border-radius: 7px;
-    transition: ease all 0.25s;
-    background: rgba($buttonGreenColor, 0.6);
-
-    &:hover {
-      background: rgba($buttonGreenColor, 1);
-    }
   }
 }
