@@ -1,8 +1,9 @@
 <template>
   <section class="cards_container">
     <div class="card" v-for="day in days" :key="day.id">
-      <div class="card_head" @click="showHideEvents(`advisory-${day.id}`)" :id="`advisory-${day.id}`">
-        <h2>{{ getCompleteDateName(day.date) }} <i class="fa-solid fa-sort-down"></i></h2>
+      <div class="card_head interactable d_flex items_center justify_between" @click="showHideEvents(`advisory-${day.id}`)" :id="`advisory-${day.id}`">
+        <h3>{{ getCompleteDateName(day.date) }}</h3>
+        <i class="fa-solid fa-sort-down"></i>
       </div>
 
       <div class="card_body">
@@ -16,8 +17,8 @@
 
             <tbody>
               <tr v-for="student in advisory.students" :key="student.id">
-                <td class="a-left mw-300">{{ student.name }}</td>
-                <td class="a-center">{{ student.group }}</td>
+                <td class="align_left mw-300">{{ student.name }}</td>
+                <td class="align_center">{{ student.group }}</td>
               </tr>
             </tbody>
           </table>
@@ -25,8 +26,8 @@
       </div>
     </div>
 
-    <div class="card w-100" v-if="days.length === 0">
-      <h2>Sin asesorías agendadas</h2>
+    <div class="card" v-if="days.length === 0">
+      <h3>Sin asesorías agendadas</h3>
     </div>
   </section>
 </template>
@@ -73,3 +74,7 @@
     return `De ${startHourFormated} a ${endHourFormated}`;
   };
 </script>
+
+<style lang="scss" scoped>
+  @import '../../assets/styles/views/adviserHome.scss';
+</style>

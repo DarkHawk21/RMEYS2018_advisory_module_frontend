@@ -18,6 +18,8 @@ export default defineConfig({
         additionalData: `
           @import "@/assets/styles/_theme.scss";
           @import "@/assets/styles/mixins/responsive.scss";
+          @import "@/assets/styles/_utils.scss";
+          @import "@/assets/styles/components/card.scss";
         `
       }
     }

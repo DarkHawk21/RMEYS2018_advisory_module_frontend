@@ -1,0 +1,45 @@
+.calendar_container {
+  width: 60%;
+  padding: 10px;
+  max-width: 900px;
+  position: relative;
+  border-radius: 14px;
+  box-shadow: 1px 1px 10px rgba($black, 0.3);
+
+  &::before {
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    height: 100%;
+    opacity: 0.8;
+    background: $white;
+    position: absolute;
+    border-radius: 14px;
+  }
+
+  th {
+    color: $white;
+    background: $green;
+    text-shadow: 1px 1px 1px rgba($black, 0.5);
+  }
+
+  .fc-toolbar-title {
+    font-size: 1rem;
+  }
+
+  .fc-button {
+    font-size: 0.8rem;
+    background: $cyanBlue;
+    border: 1px solid $cyanBlue;
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+
+  .fc-button-active {
+    background: $blue !important;
+  }
+}

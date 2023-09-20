@@ -3,26 +3,28 @@
     <FullCalendar :options="calendarOptions" />
   </section>
 
-  <section class="data_container" v-if="adviserSelected.id">
-    <div class="data_container_head">
-      <h4>Has seleccionado:</h4>
+  <section class="card data_container" v-if="adviserSelected.id">
+    <div class="card_head">
+      <div class="w_100 d_flex flex_row justify_between items_center">
+        <h4>Has seleccionado:</h4>
 
-      <button @click="advicerStore.clearSelection">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+        <button @click="advicerStore.clearSelection" class="btn bg_red">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="adviser_img_container">
+        <img :src="'/images/' + adviserSelected.img" alt="Foto de perfil del asesor"/>
+      </div>
+
+      <h5 class="adviser_name align_center">{{ adviserSelected.name }}</h5>
+      <h5 class="align_center">Asesor de {{ adviserSelected.language }}</h5>
     </div>
 
-    <div class="adviser_img_container">
-      <img :src="'/images/' + adviserSelected.img" alt="Foto de perfil del asesor"/>
-    </div>
+    <div class="card_body">
+      <h6 class="day_selected align_center">{{ adviserSelected.day }}</h6>
 
-    <h2 class="adviser_name">{{ adviserSelected.name }}</h2>
-    <h3 class="adviser_language">Asesor de {{ adviserSelected.language }}</h3>
-
-    <div class="data_selected_container">
-      <h5 class="day_selected">{{ adviserSelected.day }}</h5>
-
-      <label>De:</label>
+      <label class="form_label_control">De:</label>
       <VueDatePicker
         v-model="adviserSelected.timeSelected"
         time-picker
@@ -32,18 +34,27 @@
         :minutes-grid-increment="60"
       ></VueDatePicker>
 
-      <label>A:</label>
+      <label class="form_label_control">A:</label>
       <VueDatePicker
         v-model="adviserSelected.timeFinishBasedOnTime"
         time-picker
         readonly
       ></VueDatePicker>
 
-      <h5 class="max_selected">Quedan {{ adviserSelected.availablePlaces }} lugares disponibles</h5>
+      <h6 class="max_selected align_center">Quedan {{ adviserSelected.availablePlaces }} lugares disponibles</h6>
 
-      <label>No. de cuenta:</label>
-      <input type="text" placeholder="número de cuenta" v-model="adviserSelected.studentAccount" v-if="adviserSelected.timeSelected.hours"/>
-      <button class="btn btn-green" @click="buttonReserveClicked" v-if="adviserSelected.studentAccount">Reservar</button>
+      <label class="form_label_control">No. de cuenta:</label>
+      <input
+        type="text"
+        class="form_control"
+        placeholder="número de cuenta"
+        v-model="adviserSelected.studentAccount"
+        v-if="adviserSelected.timeSelected.hours"
+      />
+    </div>
+
+    <div class="card_footer">
+      <button class="btn w_100" @click="buttonReserveClicked" v-if="adviserSelected.studentAccount">Reservar</button>
     </div>
   </section>
 </template>
@@ -95,3 +106,8 @@
     }
   );
 </script>
+
+<style lang="scss">
+  @import "../../assets/styles/components/calendar.scss";
+  @import "../../assets/styles/views/studentHome.scss";
+</style>

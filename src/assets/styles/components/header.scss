@@ -4,11 +4,11 @@ header {
   width: 100%;
   z-index: 100;
   display: flex;
+  background: $blue;
   position: absolute;
   padding: 15px 40px;
   flex-direction: row;
   align-items: center;
-  background: #033b6b;
   justify-content: space-between;
 
   .header_logo_container {
@@ -25,13 +25,13 @@ header {
     text-align: center;
 
     h1 {
-      color: #fff;
+      color: $white;
       font-size: 1.4rem;
       margin-bottom: 2px;
     }
 
     h2 {
-      color: #e89f15;
+      color: $orange;
       font-size: 1rem;
     }
   }

@@ -1,0 +1,172 @@
+/*
+  TITULOS
+*/
+
+h2 {
+  font-size: 1.6rem;
+}
+
+h3 {
+  font-size: 1.4rem;
+}
+
+h4 {
+  font-size: 1.2rem;
+}
+
+h5 {
+  font-size: 1rem;
+}
+
+h6 {
+  font-size: 0.8rem;
+}
+
+@media (max-width: 1440px) {
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+
+  h4 {
+    font-size: 1rem;
+  }
+
+  h5 {
+    font-size: 0.8rem;
+  }
+
+  h6 {
+    font-size: 0.6rem;
+  }
+}
+
+
+
+/*
+  ALINEACIONES
+*/
+
+.align_center {
+  text-align: center;
+}
+
+.align_left {
+  text-align: left;
+}
+
+
+
+/*
+  FORMULARIOS
+*/
+
+.form_control {
+  width: 100%;
+  padding: 10px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border: 1px solid $defaultBorderColor;
+}
+
+.form_label_control {
+  width: 100%;
+  display: inline-block;
+  font-size: 0.9rem;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.btn {
+  border: none;
+  padding: 10px;
+  color: $white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  transition: ease all 0.25s;
+  background: rgba($buttonGreenColor, 0.6);
+
+  &:hover {
+    background: rgba($buttonGreenColor, 1);
+  }
+
+  &.bg_red {
+    background: rgba($red, 0.6);
+
+    &:hover {
+      background: rgba($red, 1);
+    }
+  }
+}
+
+
+
+/*
+  CONTENEDORES
+*/
+
+.table_container {
+  width: 100%;
+  overflow: auto;
+}
+
+.cards_container {
+  columns: 3;
+  width: 100%;
+  column-gap: 30px;
+
+  @include large {
+    columns: 2;
+  }
+
+  @include tablet {
+    columns: 1;
+  }
+}
+
+
+
+/*
+  TAMAÑOS
+*/
+
+.w_100 {
+  width: 100%;
+}
+
+
+
+/*
+  FLEXBOX
+*/
+
+.d_flex {
+  display: flex;
+}
+
+.flex_row {
+  flex-direction: row;
+}
+
+.justify_between {
+  justify-content: space-between;
+}
+
+.items_center {
+  align-items: center;
+}
+
+
+
+/*
+  OTROS
+*/
+
+.interactable {
+  cursor: pointer;
+}

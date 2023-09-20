@@ -1,0 +1,45 @@
+.card {
+  width: 450px;
+  padding: 40px 20px;
+  margin-bottom: 30px;
+  position: relative;
+  border-radius: 7px;
+  break-inside: avoid-column;
+  box-shadow: 1px 1px 10px rgba($black, 0.3);
+
+  &::before {
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    height: 100%;
+    opacity: 0.8;
+    background: $white;
+    position: absolute;
+    border-radius: 7px;
+  }
+
+  .card_head,
+  .card_body,
+  .card_footer {
+    width: 100%;
+  }
+
+  .card_head {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid $defaultBorderColor;
+
+    i.fa-sort-down {
+      margin-top: -10px;
+      font-size: 1.6rem;
+      transition: ease all 0.25s;
+    }
+  }
+
+  @include tablet {
+    width: 100%;
+    padding: 30px 20px;
+  }
+}

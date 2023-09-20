@@ -19,7 +19,7 @@ main {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-image: url("../images/login_background.jpg");
+    background-image: $loginBackground;
   }
 }
 
@@ -31,7 +31,7 @@ main {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  box-shadow: 1px 1px 10px rgba(#000, 0.3);
+  box-shadow: 1px 1px 10px rgba($black, 0.3);
 
   &::before {
     content: "";
@@ -41,7 +41,7 @@ main {
     z-index: -1;
     height: 100%;
     opacity: 0.8;
-    background: #fff;
+    background: $white;
     position: absolute;
     border-radius: 14px;
   }
@@ -63,23 +63,23 @@ main {
     font-size: 1.4rem;
     border-radius: 7px;
     margin-bottom: 25px;
-    border: 1px solid #ccc;
+    border: 1px solid $defaultBorderColor;
   }
 
   button {
     width: 100%;
     border: none;
     padding: 10px;
-    color: #fff;
+    color: $white;
     cursor: pointer;
     margin-top: 10px;
     font-size: 1.2rem;
     border-radius: 7px;
     transition: ease all 0.25s;
-    background: rgba(0, 120, 0, 0.6);
+    background: rgba($buttonGreenColor, 0.6);
 
     &:hover {
-      background: rgba(0, 120, 0, 1);
+      background: rgba($buttonGreenColor, 1);
     }
   }
 }
