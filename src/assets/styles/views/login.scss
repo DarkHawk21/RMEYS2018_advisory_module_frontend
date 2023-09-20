@@ -1,0 +1,85 @@
+main {
+  padding: 40px;
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh);
+
+  &::before {
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    height: 100%;
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-image: url("../images/login_background.jpg");
+  }
+}
+
+.form_container {
+  display: flex;
+  padding: 40px;
+  position: relative;
+  border-radius: 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-shadow: 1px 1px 10px rgba(#000, 0.3);
+
+  &::before {
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    height: 100%;
+    opacity: 0.8;
+    background: #fff;
+    position: absolute;
+    border-radius: 14px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    align-self: center;
+    margin-bottom: 30px;
+  }
+
+  label {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.4rem;
+    border-radius: 7px;
+    margin-bottom: 25px;
+    border: 1px solid #ccc;
+  }
+
+  button {
+    width: 100%;
+    border: none;
+    padding: 10px;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 1.2rem;
+    border-radius: 7px;
+    transition: ease all 0.25s;
+    background: rgba(0, 120, 0, 0.6);
+
+    &:hover {
+      background: rgba(0, 120, 0, 1);
+    }
+  }
+}

@@ -14,3 +14,7 @@
     </div>
   </header>
 </template>
+
+<style lang="scss">
+  @import '../assets/styles/components/header.scss';
+</style>
