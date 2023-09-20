@@ -20,6 +20,8 @@
     switch(routeName) {
       case 'adviser-home':
         return 'Asesor';
+      case 'admin-home':
+        return 'Administrador / Módulo';
       default:
         return 'Alumno';
     }
@@ -29,6 +31,8 @@
     switch(routeName) {
       case 'adviser-home':
         return 'Asesorías en tu agenda';
+      case 'admin-home':
+        return 'Disponibilidad de asesores';
       default:
         return 'Calendario de Asesorías';
     }

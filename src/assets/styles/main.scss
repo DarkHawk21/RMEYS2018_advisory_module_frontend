@@ -20,6 +20,7 @@ body {
       gap: 40px;
       margin: auto;
       display: flex;
+      flex-wrap: wrap;
       max-width: 1500px;
       flex-direction: row;
       align-items: flex-start;
@@ -391,4 +392,25 @@ body {
   .cards_container {
     columns: 1;
   }
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.form_control {
+  padding: 10px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+}
+
+.form_label_control {
+  width: 100%;
+  display: inline-block;
+  font-size: 0.9rem;
+  text-align: left;
+  margin-bottom: 10px;
 }
