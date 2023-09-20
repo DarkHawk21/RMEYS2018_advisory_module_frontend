@@ -54,8 +54,8 @@
   import { watch, inject } from "vue";
 
   import { storeToRefs } from "pinia";
-  import { useAdviserStore } from "../stores/AdviserStore";
-  import { useCalendarStore } from "../stores/CalendarStore";
+  import { useAdviserStore } from "../../stores/AdviserStore";
+  import { useCalendarStore } from "../../stores/CalendarStore";
 
   const moment = inject("moment");
 
