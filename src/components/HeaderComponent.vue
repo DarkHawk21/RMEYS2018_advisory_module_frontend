@@ -5,8 +5,8 @@
     </div>
 
     <div class="header_titles_container">
-      <h1>Alumno</h1>
-      <h2>Calendario de Asesorías</h2>
+      <h1>{{ getUserType($route.name) }}</h1>
+      <h2>{{ getDescription($route.name) }}</h2>
     </div>
 
     <div class="header_logo_container">
@@ -14,6 +14,26 @@
     </div>
   </header>
 </template>
+
+<script setup>
+  const getUserType = (routeName) => {
+    switch(routeName) {
+      case 'adviser-home':
+        return 'Asesor';
+      default:
+        return 'Alumno';
+    }
+  };
+
+  const getDescription = (routeName) => {
+    switch(routeName) {
+      case 'adviser-home':
+        return 'Asesorías en tu agenda';
+      default:
+        return 'Calendario de Asesorías';
+    }
+  };
+</script>
 
 <style lang="scss">
   @import '../assets/styles/components/header.scss';

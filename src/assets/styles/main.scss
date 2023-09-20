@@ -207,3 +207,188 @@ body {
     }
   }
 }
+
+.table_container {
+  width: 100%;
+  overflow: auto;
+  margin-bottom: 30px;
+}
+
+.cards_container {
+  columns: 3;
+  width: 100%;
+  column-gap: 30px;
+}
+
+.card {
+  width: 450px;
+  padding: 40px 20px;
+  margin-bottom: 30px;
+  position: relative;
+  border-radius: 7px;
+  break-inside: avoid-column;
+  box-shadow: 1px 1px 10px rgba(#000, 0.3);
+
+  &::before {
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    height: 100%;
+    opacity: 0.8;
+    background: #fff;
+    position: absolute;
+    border-radius: 7px;
+  }
+
+  &.w-100 {
+    width: 100%;
+  }
+
+  .card_head {
+    width: 100%;
+    display: flex;
+    cursor: pointer;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+
+    h2 {
+      width: 100%;
+      display: flex;
+      font-size: 1.6rem;
+      text-align: center;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+
+      i {
+        margin-top: -10px;
+        font-size: 1.6rem;
+        transition: ease all 0.25s;
+      }
+    }
+  }
+
+  .card_body {
+    display: none;
+  }
+}
+
+.adviser_table {
+  width: 100%;
+  border-collapse: collapse;
+
+  tbody {
+    height: 0px;
+    display: block;
+    overflow: auto;
+  }
+
+  thead,
+  tbody tr {
+    width: 100%;
+    display: table;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  tr {
+    transition: ease all 0.25s;
+
+    &:hover {
+      cursor: pointer;
+      background: rgba(#57b100, 0.1);
+    }
+  }
+
+  th,
+  td {
+    padding: 10px;
+    text-align: center;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &.mw-300 {
+      min-width: 300px;
+    }
+  }
+
+  th {
+    color: #fff;
+    font-size: 1.3rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 15px;
+    justify-content: space-between;
+    background: rgba(#033b6b, 0.8);
+    text-shadow: 1px 1px 1px rgba(#000, 0.5);
+
+    i {
+      margin-top: -10px;
+      font-size: 1.6rem;
+      transition: ease all 0.25s;
+    }
+  }
+
+  td {
+    font-size: 1.1rem;
+
+    &.a-left {
+      text-align: left;
+    }
+
+    &.a-center {
+      text-align: center;
+    }
+  }
+}
+
+@media (max-width: 1440px) {
+  .card {
+    width: 100%;
+    padding: 30px 20px;
+
+    .card_head {
+      h2 {
+        font-size: 1.4rem;
+      }
+    }
+  }
+
+  .adviser_table {
+    th {
+      font-size: 1.2rem;
+    }
+
+    td {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .cards_container {
+    columns: 2;
+  }
+}
+
+@media (max-width: 780px) {
+  main {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .cards_container {
+    columns: 1;
+  }
+}

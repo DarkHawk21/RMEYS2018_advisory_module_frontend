@@ -24,6 +24,26 @@ export const useAdviserStore = defineStore('adviser', {
       availablePlaces: 5,
       studentAccount: ''
     },
+    days: [
+      {
+        id: 1,
+        date: '2023-09-19',
+        advisories: [
+          {
+            id: 1,
+            start_time: '13:00:00',
+            end_time: '14:00:00',
+            students: [
+              {
+                id: 1,
+                name: 'Enrique Carranza Balderas',
+                group: '602'
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }),
   actions: {
     setAdviserSelected(event, moment) {
