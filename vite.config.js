@@ -10,6 +10,16 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `
+          @import "@/assets/styles/_theme.scss";
+          @import "@/assets/styles/mixins/responsive.scss";
+        `
+      }
     }
   }
-})
+});

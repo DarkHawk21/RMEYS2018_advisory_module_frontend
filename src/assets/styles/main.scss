@@ -10,7 +10,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-image: url("../images/principal_background.jpg");
+  background-image: $principalBackground;
 
   main {
     padding: 140px 40px 40px 40px;
@@ -32,7 +32,7 @@ body {
         max-width: 900px;
         position: relative;
         border-radius: 14px;
-        box-shadow: 1px 1px 10px rgba(#000, 0.3);
+        box-shadow: 1px 1px 10px rgba($black, 0.3);
 
         &::before {
           content: "";
@@ -42,15 +42,15 @@ body {
           z-index: -1;
           height: 100%;
           opacity: 0.8;
-          background: #fff;
+          background: $white;
           position: absolute;
           border-radius: 14px;
         }
 
         th {
-          color: #fff;
-          background: #57b100;
-          text-shadow: 1px 1px 1px rgba(#000, 0.5);
+          color: $white;
+          background: $green;
+          text-shadow: 1px 1px 1px rgba($black, 0.5);
         }
 
         .fc-toolbar-title {
@@ -59,8 +59,8 @@ body {
 
         .fc-button {
           font-size: 0.8rem;
-          background: #027fe9;
-          border: 1px solid #0072d6;
+          background: $cyanBlue;
+          border: 1px solid $cyanBlue;
 
           &:disabled {
             opacity: 0.5;
@@ -68,7 +68,7 @@ body {
         }
 
         .fc-button-active {
-          background: #033b6b !important;
+          background: $blue !important;
         }
       }
 
@@ -81,7 +81,7 @@ body {
         border-radius: 14px;
         align-items: center;
         flex-direction: column;
-        box-shadow: 1px 1px 10px rgba(#000, 0.3);
+        box-shadow: 1px 1px 10px rgba($black, 0.3);
 
         &::before {
           content: "";
@@ -91,7 +91,7 @@ body {
           z-index: -1;
           height: 100%;
           opacity: 0.8;
-          background: #fff;
+          background: $white;
           position: absolute;
           border-radius: 14px;
         }
@@ -108,17 +108,17 @@ body {
           }
 
           button {
-            color: #fff;
+            color: $white;
             cursor: pointer;
             padding: 6px 10px;
             font-size: 1.4rem;
             border-radius: 7px;
             border: 1px solid transparent;
-            background: rgba(250, 0, 0, 0.5);
+            background: rgba($red, 0.5);
             transition: ease all 0.25s;
 
             &:hover {
-              background: rgba(250, 0, 0, 1);
+              background: rgba($red, 1);
             }
           }
         }
@@ -150,7 +150,7 @@ body {
           font-size: 1rem;
           margin-bottom: 20px;
           padding-bottom: 20px;
-          border-bottom: 1px solid #ccc;
+          border-bottom: 1px solid $defaultBorderColor;
         }
 
         .data_selected_container {
@@ -184,23 +184,23 @@ body {
             font-size: 0.9rem;
             border-radius: 4px;
             margin-bottom: 20px;
-            border: 1px solid #ccc;
+            border: 1px solid $defaultBorderColor;
           }
 
           .btn {
             width: 100%;
             border: none;
             padding: 10px;
-            color: #fff;
+            color: $white;
             cursor: pointer;
             font-size: 0.9rem;
             border-radius: 4px;
             margin-bottom: 20px;
             transition: ease all 0.25s;
-            background: rgba(0, 120, 0, 0.6);
+            background: rgba($buttonGreenColor, 0.6);
 
             &:hover {
-              background: rgba(0, 120, 0, 1);
+              background: rgba($buttonGreenColor, 1);
             }
           }
         }
@@ -228,7 +228,7 @@ body {
   position: relative;
   border-radius: 7px;
   break-inside: avoid-column;
-  box-shadow: 1px 1px 10px rgba(#000, 0.3);
+  box-shadow: 1px 1px 10px rgba($black, 0.3);
 
   &::before {
     content: "";
@@ -238,7 +238,7 @@ body {
     z-index: -1;
     height: 100%;
     opacity: 0.8;
-    background: #fff;
+    background: $white;
     position: absolute;
     border-radius: 7px;
   }
@@ -254,7 +254,7 @@ body {
     margin-bottom: 20px;
     padding-bottom: 20px;
     align-items: center;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid $defaultBorderColor;
 
     h2 {
       width: 100%;
@@ -303,7 +303,7 @@ body {
 
     &:hover {
       cursor: pointer;
-      background: rgba(#57b100, 0.1);
+      background: rgba($green, 0.1);
     }
   }
 
@@ -311,8 +311,8 @@ body {
   td {
     padding: 10px;
     text-align: center;
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
+    border-right: 1px solid $defaultBorderColor;
+    border-bottom: 1px solid $defaultBorderColor;
 
     &:last-child {
       border-right: none;
@@ -324,15 +324,15 @@ body {
   }
 
   th {
-    color: #fff;
+    color: $white;
     font-size: 1.3rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     padding: 10px 15px;
     justify-content: space-between;
-    background: rgba(#033b6b, 0.8);
-    text-shadow: 1px 1px 1px rgba(#000, 0.5);
+    background: rgba($blue, 0.8);
+    text-shadow: 1px 1px 1px rgba($black, 0.5);
 
     i {
       margin-top: -10px;
@@ -404,7 +404,7 @@ body {
   font-size: 0.9rem;
   border-radius: 4px;
   margin-bottom: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid $defaultBorderColor;
 }
 
 .form_label_control {
