@@ -6,6 +6,10 @@
   border-radius: 14px;
   box-shadow: 1px 1px 10px rgba($black, 0.3);
 
+  &.w_100 {
+    width: 100%;
+  }
+
   &::before {
     content: "";
     top: 0;
@@ -23,6 +27,12 @@
     color: $white;
     background: $green;
     text-shadow: 1px 1px 1px rgba($black, 0.5);
+  }
+
+  .fc-event,
+  .fc-day,
+  .fc-timegrid-slot {
+    cursor: pointer;
   }
 
   .fc-toolbar-title {

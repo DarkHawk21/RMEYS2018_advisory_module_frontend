@@ -64,6 +64,11 @@ h6 {
   FORMULARIOS
 */
 
+.form_control_container {
+  width: 100%;
+  max-width: 300px;
+}
+
 .form_control {
   width: 100%;
   padding: 10px;
@@ -71,6 +76,10 @@ h6 {
   border-radius: 4px;
   margin-bottom: 20px;
   border: 1px solid $defaultBorderColor;
+}
+
+label {
+  font-size: 0.9rem;
 }
 
 .form_label_control {
@@ -100,6 +109,14 @@ h6 {
 
     &:hover {
       background: rgba($red, 1);
+    }
+  }
+
+  &.bg_gray {
+    background: rgba($gray, 0.6);
+
+    &:hover {
+      background: rgba($gray, 1);
     }
   }
 }
@@ -139,6 +156,9 @@ h6 {
   width: 100%;
 }
 
+.w_60 {
+  width: 60%;
+}
 
 
 /*
@@ -149,6 +169,10 @@ h6 {
   display: flex;
 }
 
+.flex_column {
+  flex-direction: column;
+}
+
 .flex_row {
   flex-direction: row;
 }
@@ -157,10 +181,17 @@ h6 {
   justify-content: space-between;
 }
 
+.items_start {
+  align-items: flex-start;
+}
+
 .items_center {
   align-items: center;
 }
 
+.items_end {
+  align-items: flex-end;
+}
 
 
 /*
@@ -169,4 +200,37 @@ h6 {
 
 .interactable {
   cursor: pointer;
+}
+
+.recurrence_label {
+  width: 30px;
+  height: 30px;
+  font-size: 0.8rem;
+  line-height: 32px;
+  border-radius: 50%;
+  margin-right: 10px;
+  text-align: center;
+  display: inline-block;
+  transition: ease all 0.25s;
+  background: rgba($gray, 0.1);
+
+  &:hover {
+    color: $white;
+    cursor: pointer;
+    background: rgba($cyanBlue, 1);
+  }
+}
+
+.recurrence_checkbox {
+  display: none;
+
+  &:checked + .recurrence_label {
+    color: $white;
+    background: rgba($cyanBlue, 1);
+  }
+}
+
+.recurrence_radio {
+  cursor: pointer;
+  transform: scale(1.3);
 }
