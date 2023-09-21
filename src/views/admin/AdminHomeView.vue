@@ -65,10 +65,81 @@
     </div>
   </section>
 
-  <section class="modal_wrap" v-if="showModalEditRecurrence">
+  <section class="modal_wrap" v-if="showModalEditEvent">
     <div class="modal">
       <div class="modal_header">
-        <i class="fa-solid fa-xmark" @click="hideModalEditRecurrence"></i>
+        <i class="fa-solid fa-xmark" @click="hideModalEditEvent"></i>
+      </div>
+
+      <div class="modal_body">
+        <h4 class="modal_title">Agregando la disponibilidad del asesor</h4>
+        <h5 class="modal_subtitle">{{ adviserSelected.name }}</h5>
+
+        <div class="d_flex items_start">
+          <i class="fa-regular fa-clock" style="margin-top:1px;margin-right:20px;"></i>
+
+          <div class="form_control_container">
+            <div style="margin-bottom:20px;">
+              <VueDatePicker
+                v-model="eventSelected.start"
+                :teleport="true"
+                :format="dateFormat"
+                :enable-time-picker="false"
+              />
+            </div>
+
+            <div class="d_flex items_center" style="margin-bottom:20px;">
+              <label style="margin-right:10px;">De</label>
+              <VueDatePicker
+                time-picker
+                v-model="eventSelected.extendedProps.timeStart"
+                :teleport="true"
+                :minutesIncrement="30"
+                :minutes-grid-increment="30"
+                :min-time="newEvent.minTimeStart"
+                :max-time="newEvent.maxTimeStart"
+              />
+
+              <label style="margin:0 10px;">a</label>
+              <VueDatePicker
+                time-picker
+                v-model="eventSelected.extendedProps.timeEnd"
+                :teleport="true"
+                :minutesIncrement="30"
+                :minutes-grid-increment="30"
+                :min-time="{ hours: newEvent.minTimeStart.hours + 1, minutes: newEvent.minTimeStart.minutes }"
+                :max-time="{ hours: newEvent.maxTimeStart.hours + 1, minutes: newEvent.maxTimeStart.minutes }"
+              />
+            </div>
+
+            <select
+              class="form_control"
+              style="margin-bottom:0px;"
+              v-model="eventSelected.extendedProps.recurrenceType"
+              @change="showModalRecurrenceEdit(eventSelected.extendedProps.recurrenceType)"
+            >
+              <option value="">No se repite</option>
+              <option value="each-week">Cada semana, el {{ moment(eventSelected.date).format("dddd") }}</option>
+              <option value="each-month">Cada mes, el día {{ moment(eventSelected.date).format("D") }}</option>
+              <option value="each-year">Anualmente, el {{ moment(eventSelected.date).format("D") }} de {{ moment(eventSelected.date).format("MMMM") }}</option>
+              <option value="every-business-day">Todos los días hábiles (de lunes a viernes)</option>
+              <option value="personalized">Personalizado...</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal_footer">
+        <button class="btn bg_red" @click="hideModalEditEvent">Cancelar</button>
+        <button class="btn" @click="saveEditedEvent">Guardar</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal_wrap" v-if="showModalAddRecurrence">
+    <div class="modal">
+      <div class="modal_header">
+        <i class="fa-solid fa-xmark" @click="hideModalAddRecurrence"></i>
       </div>
 
       <div class="modal_body">
@@ -172,8 +243,121 @@
       </div>
 
       <div class="modal_footer">
-        <button class="btn bg_red" @click="hideModalEditRecurrence">Cancelar</button>
+        <button class="btn bg_red" @click="hideModalAddRecurrence">Cancelar</button>
         <button class="btn" @click="saveEventRecurrence">Guardar</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal_wrap" v-if="showModalEditRecurrence">
+    <div class="modal">
+      <div class="modal_header">
+        <i class="fa-solid fa-xmark" @click="hideModalEditRecurrence"></i>
+      </div>
+
+      <div class="modal_body">
+        <h4 class="modal_title" style="margin-bottom:20px;">Recurrencia personalizada</h4>
+
+        <div class="form_control_container">
+          <div style="margin-bottom:10px;">
+            <label style="margin-right:10px;">Repetir cada</label>
+            <input
+              type="number"
+              min="1"
+              class="form_control align_center"
+              style="width:70px;margin-right:10px;"
+              v-model="eventSelected.extendedProps.recurrence.repeatTimes.times"
+            >
+
+            <select class="form_control" style="width:110px;" v-model="eventSelected.extendedProps.recurrence.repeatTimes.type">
+              <option value="diary">días</option>
+              <option value="weekly">semanas</option>
+              <option value="monthly">meses</option>
+              <option value="annual">años</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:20px;">
+            <label class="form_label_control" style="margin-bottom:20px;">Repetir el</label>
+
+            <input type="checkbox" id="checkMonday" class="recurrence_checkbox" value="monday" v-model="eventSelected.extendedProps.recurrence.repeatDays">
+            <label for="checkMonday" class="recurrence_label">L</label>
+
+            <input type="checkbox" id="checkTuesday" class="recurrence_checkbox" value="tuesday" v-model="eventSelected.extendedProps.recurrence.repeatDays">
+            <label for="checkTuesday" class="recurrence_label">M</label>
+
+            <input type="checkbox" id="checkWednesday" class="recurrence_checkbox" value="wednesday" v-model="eventSelected.extendedProps.recurrence.repeatDays">
+            <label for="checkWednesday" class="recurrence_label">M</label>
+
+            <input type="checkbox" id="checkThursday" class="recurrence_checkbox" value="thursday" v-model="eventSelected.extendedProps.recurrence.repeatDays">
+            <label for="checkThursday" class="recurrence_label">J</label>
+
+            <input type="checkbox" id="checkFriday" class="recurrence_checkbox" value="friday" v-model="eventSelected.extendedProps.recurrence.repeatDays">
+            <label for="checkFriday" class="recurrence_label">V</label>
+          </div>
+
+          <div>
+            <label class="form_label_control" style="margin-bottom:20px;">Finaliza</label>
+
+            <div class="d_flex items_center" style="margin-bottom:10px;">
+              <input
+                type="radio"
+                id="radioEndNever"
+                value="never"
+                style="margin-right:10px;"
+                class="recurrence_radio"
+                name="recurrenceRadio"
+                v-model="eventSelected.extendedProps.recurrence.finishAt.type"
+              >
+              <label for="radioEndNever">Nunca</label>
+            </div>
+
+            <div class="d_flex items_center" style="margin-bottom:10px;">
+              <input
+                type="radio"
+                id="radioEndThe"
+                value="date"
+                style="margin-right:10px;"
+                class="recurrence_radio"
+                name="recurrenceRadio"
+                v-model="eventSelected.extendedProps.recurrence.finishAt.type"
+              >
+              <label for="radioEndThe" style="margin-right:80px;">El</label>
+              <VueDatePicker
+                :readonly="eventSelected.extendedProps.recurrence.finishAt.type != 'date'"
+                v-model="eventSelected.extendedProps.recurrence.finishAt.value"
+              />
+            </div>
+
+            <div class="d_flex items_center">
+              <input
+                type="radio"
+                id="radioEndAfter"
+                value="times"
+                style="margin-right:10px;"
+                class="recurrence_radio"
+                name="recurrenceRadio"
+                v-model="eventSelected.extendedProps.recurrence.finishAt.type"
+              >
+              <label for="radioEndAfter" style="margin-right:12.5px;min-width:80px;">Después de</label>
+
+              <input
+                type="number"
+                min="1"
+                class="form_control align_center"
+                style="width:70px;margin-right:10px;margin-bottom:0;"
+                :readonly="eventSelected.extendedProps.recurrence.finishAt.type != 'times'"
+                v-model="eventSelected.extendedProps.recurrence.finishAt.value"
+              >
+              <label>ocurrencias</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal_footer">
+        <button class="btn bg_red" @click="hideModalEditRecurrence">Cancelar</button>
+        <button class="btn" @click="saveEventEditRecurrence">Guardar</button>
       </div>
     </div>
   </section>
@@ -231,11 +415,13 @@
   const { adviserSelected, advisers, filters } = storeToRefs(adviserStore);
 
   const calendarStore = useCalendarStore();
-  const { options, newEvent } = storeToRefs(calendarStore);
+  const { options, newEvent, eventSelected } = storeToRefs(calendarStore);
 
   adviserStore.getAdvisers();
 
   let showModalAddEvent = ref(false);
+  let showModalAddRecurrence = ref(false);
+  let showModalEditEvent = ref(false);
   let showModalEditRecurrence = ref(false);
 
   const searchAdviserEvents = () => {
@@ -253,16 +439,33 @@
     showModalAddEvent.value = false;
   };
 
+  const saveEditedEvent = () => {
+    console.log("Saving edited event");
+  };
+
   const hideModalAddEvent = () => {
     showModalAddEvent.value = false;
+  };
+
+  const hideModalAddRecurrence = () => {
+    showModalAddRecurrence.value = false;
   };
 
   const hideModalEditRecurrence = () => {
     showModalEditRecurrence.value = false;
   };
 
+  const hideModalEditEvent = () => {
+    showModalEditEvent.value = false;
+  };
+
   const saveEventRecurrence = () => {
     console.log(newEvent.value.recurrence);
+    showModalAddRecurrence.value = false;
+  }
+
+  const saveEventEditRecurrence = () => {
+    console.log(eventSelected.value.extendedProps.recurrence);
     showModalEditRecurrence.value = false;
   }
 
@@ -274,12 +477,20 @@
     return `${dayName} ${dayNumber} de ${monthName}`;
   };
 
+  const showModalRecurrenceEdit = (recurrenceType) => {
+    switch(recurrenceType) {
+      case 'personalized':
+          showModalEditRecurrence.value = true;
+        break;
+    }
+  };
+
   watch(
     () => newEvent.value.recurrenceType,
     (recurrence) => {
       switch(recurrence) {
         case 'personalized':
-          showModalEditRecurrence.value = true;
+          showModalAddRecurrence.value = true;
           break;
       }
     }
@@ -289,6 +500,17 @@
     () => newEvent.value.timeStart,
     (timeStart) => {
       newEvent.value.timeEnd = {
+        hours: parseInt(timeStart.hours) + 1,
+        minutes: parseInt(timeStart.minutes),
+        seconds: parseInt(timeStart.seconds)
+      };
+    }
+  );
+
+  watch(
+    () => eventSelected.value.timeStart,
+    (timeStart) => {
+      eventSelected.value.timeEnd = {
         hours: parseInt(timeStart.hours) + 1,
         minutes: parseInt(timeStart.minutes),
         seconds: parseInt(timeStart.seconds)
@@ -309,6 +531,10 @@
           minutes: parseInt(moment(date).format('mm')),
           seconds: parseInt(moment(date).format('ss'))
         };
+      },
+      eventClick: ({event}) => {
+        calendarStore.getEventData(event.id, moment);
+        showModalEditEvent.value = true;
       }
     };
   });

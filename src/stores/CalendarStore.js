@@ -84,6 +84,9 @@ export const useCalendarStore = defineStore('calendar', {
           minutes: parseInt(moment(eventFromDB.end).format("mm")),
         }
       };
+    },
+    clearSelection() {
+      this.eventSelected = {};
     }
   }
 });

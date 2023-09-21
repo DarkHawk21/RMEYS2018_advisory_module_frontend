@@ -8,7 +8,7 @@
       <div class="w_100 d_flex flex_row justify_between items_center">
         <h4>Has seleccionado:</h4>
 
-        <button @click="advicerStore.clearSelection" class="btn bg_red">
+        <button @click="calendarStore.clearSelection" class="btn bg_red">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -93,7 +93,6 @@
   const calendarOptions = {
     ...options.value,
     eventClick: ({event}) => {
-      calendarStore.getAdvicesOnEvent();
       calendarStore.getEventData(event.id, moment);
     }
   };

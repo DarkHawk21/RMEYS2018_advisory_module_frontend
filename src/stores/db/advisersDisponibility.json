@@ -9,11 +9,31 @@
     "borderColor": "#cf142b",
     "textColor": "#fff",
     "extendedProps": {
+      "timeStart": {
+        "hours": 8,
+        "minutes": 0
+      },
+      "timeEnd": {
+        "hours": 15,
+        "minutes": 0
+      },
       "advisor": {
         "id": "1",
         "language": "Inglés",
         "img": "profile.png",
         "name": "Enrique Carranza Balderas"
+      },
+      "recurrenceType": "personalized",
+      "recurrence": {
+        "repeatTimes": {
+          "times": 1,
+          "type": "diary"
+        },
+        "repeatDays": [],
+        "finishAt": {
+          "type": "",
+          "value": ""
+        }
       },
       "availablePlaces": "5"
     }
@@ -31,11 +51,31 @@
     "textColor": "#fff",
     "daysOfWeek": [3, 4],
     "extendedProps": {
+      "timeStart": {
+        "hours": 10,
+        "minutes": 0
+      },
+      "timeEnd": {
+        "hours": 16,
+        "minutes": 0
+      },
       "advisor": {
         "id": "2",
         "name": "Jessica Guadalupe Hernández Rodriguez",
         "language": "Francés",
         "img": "profile.png"
+      },
+      "recurrenceType": "personalized",
+      "recurrence": {
+        "repeatTimes": {
+          "times": 1,
+          "type": "diary"
+        },
+        "repeatDays": [],
+        "finishAt": {
+          "type": "",
+          "value": ""
+        }
       },
       "availablePlaces": "5"
     }

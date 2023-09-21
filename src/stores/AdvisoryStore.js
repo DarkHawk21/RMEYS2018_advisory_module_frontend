@@ -8,5 +8,15 @@ export const useAdvisoryStore = defineStore('advisory', {
       endTime: null,
       studentAccount: ''
     }
-  })
+  }),
+  actions: {
+    clearSelection() {
+      this.newAdvisory = {
+        date: '',
+        startTime: null,
+        endTime: null,
+        studentAccount: ''
+      };
+    }
+  }
 });
