@@ -1,17 +1,17 @@
 <template>
   <section class="cards_container">
-    <div class="card" v-for="day in days" :key="day.id">
-      <div class="card_head interactable d_flex items_center justify_between" @click="showHideEvents(`advisory-${day.id}`)" :id="`advisory-${day.id}`">
-        <h3>{{ getCompleteDateName(day.date) }}</h3>
+    <div class="card" v-for="advice in adviserAdvicesByDay" :key="advice.id">
+      <div class="card_head interactable d_flex items_center justify_between" @click="showHideEvents(`advisory-${advice.id}`)" :id="`advisory-${advice.id}`">
+        <h3>{{ getCompleteDateName(advice.date) }}</h3>
         <i class="fa-solid fa-sort-down"></i>
       </div>
 
       <div class="card_body">
-        <div class="table_container" v-for="advisory in day.advisories" :key="advisory.id">
+        <div class="table_container" v-for="advisory in advice.advisories" :key="advisory.id">
           <table class="adviser_table">
             <thead @click="showHideStudents(`advisory-table-${advisory.id}`)" :id="`advisory-table-${advisory.id}`">
               <tr>
-                <th colspan="2">{{ getCompleteIntervalTime(day, advisory) }} <i class="fa-solid fa-sort-down"></i></th>
+                <th colspan="2">{{ getCompleteIntervalTime(advice, advisory) }} <i class="fa-solid fa-sort-down"></i></th>
               </tr>
             </thead>
 
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <div class="card" v-if="days.length === 0">
+    <div class="card" v-if="adviserAdvicesByDay.length === 0">
       <h3>Sin asesorías agendadas</h3>
     </div>
   </section>
@@ -39,9 +39,11 @@
   import { useAdviserStore } from "../../stores/AdviserStore";
 
   const advicerStore = useAdviserStore();
-  const { days } = storeToRefs(advicerStore);
+  const { adviserAdvicesByDay } = storeToRefs(advicerStore);
 
   const moment = inject("moment");
+
+  advicerStore.getAllAdvicesByAdviserByDay();
 
   const showHideStudents = (elementId) => {
     const tbody = document.querySelector(`#${elementId} + tbody`);

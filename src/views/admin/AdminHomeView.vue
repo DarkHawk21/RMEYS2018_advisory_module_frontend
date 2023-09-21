@@ -7,7 +7,7 @@
 
       <div class="modal_body">
         <h4 class="modal_title">Agregando la disponibilidad del asesor</h4>
-        <h5 class="modal_subtitle">Enrique Carranza Balderas</h5>
+        <h5 class="modal_subtitle">{{ adviserSelected.name }}</h5>
 
         <div class="d_flex items_start">
           <i class="fa-regular fa-clock" style="margin-top:1px;margin-right:20px;"></i>
@@ -60,7 +60,7 @@
 
       <div class="modal_footer">
         <button class="btn bg_red" @click="hideModalAddEvent">Cancelar</button>
-        <button class="btn" @click="saveEvent">Guardar</button>
+        <button class="btn" @click="saveNewEvent">Guardar</button>
       </div>
     </div>
   </section>
@@ -183,10 +183,8 @@
       <div class="form_control_container">
         <label class="form_label_control">Selecciona un asesor:</label>
         <select class="form_control" style="margin-bottom:0;" v-model="filters.adviser">
-          <option value="">Todos</option>
-          <option value="1">Enrique Carranza Balderas</option>
-          <option value="2">Edalid Jimenez Montero</option>
-          <option value="3">Jessica Guadalupe Hernández Rodríguez</option>
+          <option :value="null">...</option>
+          <option v-for="adviser in advisers" :key="adviser.id" :value="adviser">{{ adviser.name }}</option>
         </select>
       </div>
 
@@ -203,7 +201,7 @@
       <div class="w_100 d_flex flex_row justify_between items_center">
         <h4>Has seleccionado:</h4>
 
-        <button @click="advicerStore.clearSelection" class="btn bg_red">
+        <button @click="adviserStore.clearSelection" class="btn bg_red">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -221,29 +219,38 @@
 <script setup>
   import FullCalendar from "@fullcalendar/vue3";
 
-  import { ref, watch, inject } from "vue";
+  import { ref, watch, inject, computed } from "vue";
 
   import { storeToRefs } from "pinia";
   import { useAdviserStore } from "../../stores/AdviserStore";
-  import { useAdminCalendarStore } from "../../stores/admin/AdminCalendarStore";
+  import { useCalendarStore } from "../../stores/CalendarStore";
 
   const moment = inject("moment");
 
-  const advicerStore = useAdviserStore();
-  const { adviserSelected } = storeToRefs(advicerStore);
+  const adviserStore = useAdviserStore();
+  const { adviserSelected, advisers, filters } = storeToRefs(adviserStore);
 
-  const adminCalendarStore = useAdminCalendarStore();
-  const { calendarEvents, options, newEvent, filters } = storeToRefs(adminCalendarStore);
+  const calendarStore = useCalendarStore();
+  const { options, newEvent } = storeToRefs(calendarStore);
+
+  adviserStore.getAdvisers();
 
   let showModalAddEvent = ref(false);
   let showModalEditRecurrence = ref(false);
 
-  const dateFormat = (date) => {
-    const dayName = moment(date).format("dddd")[0].toUpperCase() + moment(date).format("dddd").substring(1);
-    const dayNumber = moment(date).format("D");
-    const monthName = moment(date).format("MMMM");
+  const searchAdviserEvents = () => {
+    adviserStore.getAdviser(filters.value.adviser.id);
+    calendarStore.getAdvisersDisponibility();
+  };
 
-    return `${dayName} ${dayNumber} de ${monthName}`;
+  const saveNewEvent = () => {
+    if (newEvent.value.timeStart.minutes != newEvent.value.timeEnd.minutes) {
+      alert("No se puede crear un evento en fracciones de menos de una hora.");
+      return;
+    }
+
+    console.log(newEvent.value);
+    showModalAddEvent.value = false;
   };
 
   const hideModalAddEvent = () => {
@@ -254,27 +261,21 @@
     showModalEditRecurrence.value = false;
   };
 
-  const searchAdviserEvents = () => {
-    console.log("searching...");
-  };
-
-  const saveEvent = () => {
-    if (newEvent.timeStart.minutes != newEvent.timeEnd.minutes) {
-      alert("No se puede crear un evento en fracciones de menos de una hora.");
-      return;
-    }
-
-    console.log(newEvent);
-    showModalAddEvent.value = false;
-  };
-
   const saveEventRecurrence = () => {
-    console.log(newEvent.recurrence);
+    console.log(newEvent.value.recurrence);
     showModalEditRecurrence.value = false;
   }
 
+  const dateFormat = (date) => {
+    const dayName = moment(date).format("dddd")[0].toUpperCase() + moment(date).format("dddd").substring(1);
+    const dayNumber = moment(date).format("D");
+    const monthName = moment(date).format("MMMM");
+
+    return `${dayName} ${dayNumber} de ${monthName}`;
+  };
+
   watch(
-    () => newEvent.recurrenceType,
+    () => newEvent.value.recurrenceType,
     (recurrence) => {
       switch(recurrence) {
         case 'personalized':
@@ -285,9 +286,9 @@
   );
 
   watch(
-    () => newEvent.timeStart,
+    () => newEvent.value.timeStart,
     (timeStart) => {
-      newEvent.timeEnd = {
+      newEvent.value.timeEnd = {
         hours: parseInt(timeStart.hours) + 1,
         minutes: parseInt(timeStart.minutes),
         seconds: parseInt(timeStart.seconds)
@@ -295,22 +296,22 @@
     }
   );
 
-  const calendarOptions = {
-    ...options.value,
-    events: calendarEvents.value,
-    eventClick: ({ event }) => {
-      advicerStore.setAdviserSelected(event, moment);
-    },
-    dateClick: ({ date }) => {
-      showModalAddEvent.value = true;
-      newEvent.date = date;
-      newEvent.timeStart = {
-        hours: parseInt(moment(date).format('hh')),
-        minutes: parseInt(moment(date).format('mm')),
-        seconds: parseInt(moment(date).format('ss'))
-      };
-    }
-  };
+  options.value.headerToolbar.end = "timeGridDay,timeGridWeek,dayGridMonth";
+
+  const calendarOptions = computed(() => {
+    return {
+      ...options.value,
+      dateClick: ({ date }) => {
+        showModalAddEvent.value = true;
+        newEvent.value.date = date;
+        newEvent.value.timeStart = {
+          hours: parseInt(moment(date).format('hh')),
+          minutes: parseInt(moment(date).format('mm')),
+          seconds: parseInt(moment(date).format('ss'))
+        };
+      }
+    };
+  });
 </script>
 
 <style lang="scss">

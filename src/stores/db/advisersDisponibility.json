@@ -1,0 +1,43 @@
+[
+  {
+    "id": "1",
+    "groupId": "1",
+    "title": "Enrique Carranza Balderas",
+    "start": "2023-09-22T08:00:00",
+    "end": "2023-09-22T15:00:00",
+    "backgroundColor": "#cf142b",
+    "borderColor": "#cf142b",
+    "textColor": "#fff",
+    "extendedProps": {
+      "advisor": {
+        "id": "1",
+        "language": "Inglés",
+        "img": "profile.png",
+        "name": "Enrique Carranza Balderas"
+      },
+      "availablePlaces": "5"
+    }
+  },
+  {
+    "id": "2",
+    "groupId": "2",
+    "title": "Jessica Guadalupe Hernández Rodriguez",
+    "startTime": "10:00:00",
+    "endTime": "16:00:00",
+    "startRecur": "2023-09-14",
+    "endRecur": "2023-09-29",
+    "backgroundColor": "#cf142b",
+    "borderColor": "#cf142b",
+    "textColor": "#fff",
+    "daysOfWeek": [3, 4],
+    "extendedProps": {
+      "advisor": {
+        "id": "2",
+        "name": "Jessica Guadalupe Hernández Rodriguez",
+        "language": "Francés",
+        "img": "profile.png"
+      },
+      "availablePlaces": "5"
+    }
+  }
+]

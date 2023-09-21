@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1",
+    "name": "Enrique Carranza Balderas",
+    "language": "Inglés",
+    "img": "profile.png"
+  },
+  {
+    "id": "2",
+    "name": "Jessica Guadalupe Hernández Rodriguez",
+    "language": "Francés",
+    "img": "profile.png"
+  },
+  {
+    "id": "3",
+    "name": "Agustín López Cerecedo",
+    "language": "Italiano",
+    "img": "profile.png"
+  }
+]

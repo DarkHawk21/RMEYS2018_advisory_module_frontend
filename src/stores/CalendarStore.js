@@ -2,59 +2,10 @@ import { defineStore } from "pinia";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import advisersDisponibility from './db/advisersDisponibility.json';
 
 export const useCalendarStore = defineStore('calendar', {
   state: () => ({
-    calendarEvents: [
-      {
-        id: 1,
-        groupId: 1,
-        title: 'Marco Antonio Hernández Rodríguez',
-        start: '2023-09-22T08:00:00',
-        end: '2023-09-22T15:00:00',
-        backgroundColor: '#cf142b',
-        borderColor: '#cf142b',
-        textColor: "#fff",
-        extendedProps: {
-          language: 'Inglés',
-          img: 'profile.png'
-        }
-      },
-      {
-        id: 2,
-        groupId: 2,
-        title: 'Jessica Guadalupe Hernández Rodriguez',
-        start: '2023-09-21T10:00:00',
-        end: '2023-09-21T14:00:00',
-        backgroundColor: '#cf142b',
-        borderColor: '#cf142b',
-        textColor: "#fff",
-        extendedProps: {
-          language: 'Inglés',
-          img: 'profile.png'
-        }
-      }
-    ],
-    advicesOnSelectedEvent: [
-      {
-        id: 1,
-        event_id: 1,
-        max_places: 5,
-        total_enrolled_students: 1,
-        hour_start: '09:00:00',
-        hour_end: '10:00:00',
-        date: '2023-09-11',
-        enrolled_students: [
-          {
-            id: 1,
-            advice_id: 1,
-            name: 'Enrique',
-            last_name: 'Carranza',
-            account: '316304034'
-          }
-        ]
-      }
-    ],
     options: {
       locale: "es",
       firstDay: "1",
@@ -83,7 +34,56 @@ export const useCalendarStore = defineStore('calendar', {
         year: "numeric",
         month: "long",
         day: "numeric",
-      }
+      },
+      events: []
+    },
+    eventSelected: {},
+    newEvent: {
+      date: '',
+      timeStart: {},
+      timeEnd: {},
+      recurrenceType: '',
+      recurrence: {
+        repeatTimes: {
+          times: 1,
+          type: 'diary'
+        },
+        repeatDays: [],
+        finishAt: {
+          type: '',
+          value: ''
+        }
+      },
+      minTimeStart: {
+        hours: 7,
+        minutes: 0,
+        seconds: 0
+      },
+      maxTimeStart: {
+        hours: 21,
+        minutes: 0,
+        seconds: 0
+      },
+    },
+  }),
+  actions: {
+    getAdvisersDisponibility() {
+      this.options.events = advisersDisponibility;
+    },
+    getEventData(eventId, moment) {
+      const eventFromDB = advisersDisponibility.find(adviserDisponibility => adviserDisponibility.id == eventId);
+
+      this.eventSelected = {
+        ...eventFromDB,
+        minTime: {
+          hours: parseInt(moment(eventFromDB.start).format("HH")),
+          minutes: parseInt(moment(eventFromDB.start).format("mm")),
+        },
+        maxTime: {
+          hours: parseInt(moment(eventFromDB.end).format("HH")) - 1,
+          minutes: parseInt(moment(eventFromDB.end).format("mm")),
+        }
+      };
     }
-  })
+  }
 });
