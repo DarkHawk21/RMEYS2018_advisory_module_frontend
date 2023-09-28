@@ -1,5 +1,6 @@
 <template>
   <section class="calendar_container">
+    <button @click="userStore.logout()">Cerrar sesión</button>
     <FullCalendar :options="calendarOptions" />
   </section>
 
@@ -69,6 +70,7 @@
   import { storeToRefs } from "pinia";
   import { useAdvisoryStore } from '../../stores/AdvisoryStore';
   import { useCalendarStore } from "../../stores/CalendarStore";
+  import { useUserStore } from "../../stores/UserStore";
 
   const moment = inject("moment");
 
@@ -77,6 +79,8 @@
 
   const advisoryStore = useAdvisoryStore();
   const { newAdvisory } = storeToRefs(advisoryStore);
+
+  const userStore = useUserStore();
 
   calendarStore.getAdvisersDisponibility();
 

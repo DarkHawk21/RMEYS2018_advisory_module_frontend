@@ -5,7 +5,7 @@ import { defineStore } from 'pinia';
 export const useUserStore = defineStore('user', {
   state: () => ({
     user: {},
-    token: localStorage.getItem(_TOKEN) || '',
+    token: localStorage.getItem(_TOKEN) || null,
   }),
   actions: {
     async login(loginData) {
@@ -15,6 +15,16 @@ export const useUserStore = defineStore('user', {
         this.token = data.access_token;
         axios.defaults.headers.common.Authorization = `Bearer ${data.access_token}`;
         axios.defaults.headers.common.Accept = 'application/json';
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async logout() {
+      try {
+        const response = await axios.post('http://localhost:8000/api/v1/logout', this.token);
+        localStorage.removeItem(_TOKEN);
+        this.token = null;
+        axios.defaults.headers.common.Authorization = '';
       } catch (error) {
         console.log(error);
       }

@@ -435,13 +435,10 @@
       return;
     }
 
-    console.log(newEvent.value);
     showModalAddEvent.value = false;
   };
 
-  const saveEditedEvent = () => {
-    console.log("Saving edited event");
-  };
+  const saveEditedEvent = () => {};
 
   const hideModalAddEvent = () => {
     showModalAddEvent.value = false;
@@ -460,12 +457,10 @@
   };
 
   const saveEventRecurrence = () => {
-    console.log(newEvent.value.recurrence);
     showModalAddRecurrence.value = false;
   }
 
   const saveEventEditRecurrence = () => {
-    console.log(eventSelected.value.extendedProps.recurrence);
     showModalEditRecurrence.value = false;
   }
 
