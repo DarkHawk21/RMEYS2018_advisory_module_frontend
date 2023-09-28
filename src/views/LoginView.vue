@@ -1,27 +1,40 @@
 <template>
   <main>
-    <div class="form_container">
+    <form class="form_container" @submit.prevent="handleSubmit">
       <h2 class="align_center">Iniciar sesión</h2>
 
       <label class="form_label_control">Correo electrónico:</label>
-      <input type="email" v-model="email" placeholder="asesor@ejemplo.com" class="form_control" />
+      <input
+        type="email"
+        v-model="email"
+        placeholder="asesor@ejemplo.com"
+        class="form_control"
+      />
 
       <label class="form_label_control">Contraseña:</label>
-      <input type="password" v-model="password" placeholder="********" class="form_control" />
+      <input
+        type="password"
+        v-model="password"
+        placeholder="********"
+        class="form_control"
+      />
 
-      <button @click="login" class="btn w_100">Iniciar sesión</button>
-    </div>
+      <button class="btn w_100" type="submit">Iniciar sesión</button>
+    </form>
   </main>
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, watch } from 'vue';
   import { storeToRefs } from "pinia";
+  import { useRouter } from "vue-router";
 
   import { useUserStore } from "../stores/UserStore";
 
+  const router = useRouter();
+
   const userStore = useUserStore();
-  const { user } = storeToRefs(userStore);
+  const { token } = storeToRefs(userStore);
 
   const email = ref("enrique.carranza@keypro.com.mx");
   const password = ref("Pass1234");
@@ -30,11 +43,19 @@
     return email.value && password.value;
   });
 
-  const login = () => {
+  const handleSubmit = () => {
     if (canLogin.value) {
       userStore.login({ email: email.value, password: password.value });
     }
   };
+
+  watch(token, async (token) => {
+    if (token) {
+      router.currentRoute.value.query.from
+        ? router.replace(router.currentRoute.value.query.from)
+        : router.replace({ name: 'student-home' });
+    }
+  });
 </script>
 
 <style lang="scss" scoped>

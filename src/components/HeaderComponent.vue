@@ -10,12 +10,16 @@
     </div>
 
     <div class="header_logo_container">
-      <img src="/images/logo_enp9.png" alt="Logo ENP 9" />
+      <img src="/images/logo_enp9.png" alt="Logo ENP 9" @click="userStore.logout()" style="cursor:pointer;" />
     </div>
   </header>
 </template>
 
 <script setup>
+  import { useUserStore } from "../stores/UserStore";
+
+  const userStore = useUserStore();
+
   const getUserType = (routeName) => {
     switch(routeName) {
       case 'adviser-home':
