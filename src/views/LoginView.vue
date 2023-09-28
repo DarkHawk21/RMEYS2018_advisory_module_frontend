@@ -16,18 +16,24 @@
 
 <script setup>
   import { ref, computed } from 'vue';
+  import { storeToRefs } from "pinia";
 
-  const email = ref();
-  const password = ref();
+  import { useUserStore } from "../stores/UserStore";
+
+  const userStore = useUserStore();
+  const { user } = storeToRefs(userStore);
+
+  const email = ref("enrique.carranza@keypro.com.mx");
+  const password = ref("Pass1234");
 
   const canLogin = computed(() => {
     return email.value && password.value;
   });
 
   const login = () => {
-    canLogin.value
-    ? console.log('login')
-    : console.log('no login');
+    if (canLogin.value) {
+      userStore.login({ email: email.value, password: password.value });
+    }
   };
 </script>
 

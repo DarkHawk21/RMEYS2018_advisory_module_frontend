@@ -1,8 +1,6 @@
-import { inject } from "vue";
+import moment from 'moment';
 import jwtDecode from 'jwt-decode';
 import { _TOKEN } from '../config';
-
-const moment = inject("moment");
 
 export default (to, from, next) => {
   const isNotProtected = ['login'].includes(to.name);
@@ -10,7 +8,7 @@ export default (to, from, next) => {
   try {
     const token = jwtDecode(localStorage.getItem(_TOKEN));
 
-    if (moment.unix(token.exp) < moment()) {
+    if (token.exp < moment().unix()) {
       throw new Error('Auth token expired');
     }
 
@@ -20,8 +18,8 @@ export default (to, from, next) => {
     // ].some(permission => token.permissions.includes(permission));
 
     // const isAllowed = to.meta.permission === '*';
-
-    if (!isAllowed && (isNotProtected || !hasPermission)) {
+    if (isNotProtected) {
+    // if (!isAllowed && (isNotProtected || !hasPermission)) {
       next('/');
     } else {
       next();
@@ -29,7 +27,7 @@ export default (to, from, next) => {
   } catch (error) {
     localStorage.removeItem(_TOKEN);
     const loginpath = window.location.pathname;
-    console.log('Path', window.location);
+
     isNotProtected
       ? next()
       : next({
