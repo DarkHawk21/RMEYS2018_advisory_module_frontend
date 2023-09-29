@@ -49,7 +49,7 @@
     }
   };
 
-  watch(token, async (token) => {
+  watch(token, (token) => {
     if (token) {
       router.currentRoute.value.query.from
         ? router.replace(router.currentRoute.value.query.from)
