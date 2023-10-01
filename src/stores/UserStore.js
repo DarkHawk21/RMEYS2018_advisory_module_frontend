@@ -2,6 +2,7 @@ import axios from 'axios';
 import { _TOKEN } from '../config';
 import { defineStore } from 'pinia';
 import { useLoaderStore } from './LoaderStore';
+import Swal from 'sweetalert2/dist/sweetalert2';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -20,7 +21,20 @@ export const useUserStore = defineStore('user', {
         axios.defaults.headers.common.Accept = 'application/json';
         useLoaderStore().loading = false;
       } catch (error) {
-        console.log(error);
+        useLoaderStore().loading = false;
+
+        if (error.response.status == 401) {
+          Swal.fire({
+            toast: true,
+            timer: 5000,
+            icon: 'error',
+            position: 'bottom-end',
+            timerProgressBar: true,
+            showConfirmButton: false,
+            title: 'Error de login',
+            text: 'Credenciales de acceso incorrectas.'
+          });
+        }
       }
     },
     async logout() {
@@ -33,7 +47,7 @@ export const useUserStore = defineStore('user', {
         axios.defaults.headers.common.Authorization = '';
         useLoaderStore().loading = false;
       } catch (error) {
-        console.log(error);
+        useLoaderStore().loading = false;
       }
     }
   }
