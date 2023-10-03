@@ -25,6 +25,7 @@
 </template>
 
 <script setup>
+  import jwtDecode from 'jwt-decode';
   import { ref, computed, watch } from 'vue';
   import { storeToRefs } from "pinia";
   import { useRouter } from "vue-router";
@@ -51,9 +52,23 @@
 
   watch(token, (token) => {
     if (token) {
-      router.currentRoute.value.query.from
-        ? router.replace(router.currentRoute.value.query.from)
-        : router.replace({ name: 'student-home' });
+      const { role } = jwtDecode(token);
+
+      if (router.currentRoute.value.query.from) {
+        router.replace(router.currentRoute.value.query.from)
+      } else {
+        switch(role) {
+          case 'admin':
+            router.replace({ name: 'admin-home' });
+          break;
+          case 'advisor':
+            router.replace({ name: 'adviser-home' });
+          break;
+          case 'student':
+            router.replace({ name: 'student-home' });
+          break;
+        }
+      }
     }
   });
 </script>

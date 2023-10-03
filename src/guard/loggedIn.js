@@ -12,15 +12,23 @@ export default (to, from, next) => {
       throw new Error('Auth token expired');
     }
 
-    // const hasPermission = [
-    //   to.meta.permission,
-    //   '*'
-    // ].some(permission => token.permissions.includes(permission));
+    const rolesCanEnter = to.meta.rolesCanEnter;
+    const hasPermission = rolesCanEnter.some(roleCanEnter => token.role == roleCanEnter);
 
-    // const isAllowed = to.meta.permission === '*';
-    if (isNotProtected) {
-    // if (!isAllowed && (isNotProtected || !hasPermission)) {
-      next('/');
+    if (isNotProtected || !hasPermission) {
+      switch(token.role) {
+        case 'admin':
+          next('/admin');
+        break;
+        case 'advisor':
+          next('/adviser');
+        break;
+        case 'student':
+          next('/');
+        break;
+        default:
+          next('/');
+      }
     } else {
       next();
     }

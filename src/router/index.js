@@ -19,7 +19,9 @@ const routes = [
         name: 'student-home',
         component: StudentHomeView,
         meta: {
-          permission: '*'
+          rolesCanEnter: [
+            'student'
+          ]
         }
       },
       {
@@ -27,7 +29,9 @@ const routes = [
         name: 'adviser-home',
         component: AdviserHomeView,
         meta: {
-          permission: '*'
+          rolesCanEnter: [
+            'advisor'
+          ]
         }
       },
       {
@@ -35,7 +39,9 @@ const routes = [
         name: 'admin-home',
         component: AdminHomeView,
         meta: {
-          permission: '*'
+          rolesCanEnter: [
+            'admin'
+          ]
         }
       }
     ]
