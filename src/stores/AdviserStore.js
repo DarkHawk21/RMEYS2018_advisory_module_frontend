@@ -1,15 +1,11 @@
+import axios from 'axios';
 import { defineStore } from 'pinia';
-import advisers from './db/advisers.json';
+import { useLoaderStore } from './LoaderStore';
 import adviserAdvicesByDay from './db/adviserAdvicesByDay.json';
 
 export const useAdviserStore = defineStore('adviser', {
   state: () => ({
-    adviserSelected: {
-      id: undefined,
-      img: '',
-      name: '',
-      language: '',
-    },
+    adviserSelected: {},
     advisers: [],
     adviserAdvicesByDay: [],
     filters: {
@@ -17,22 +13,33 @@ export const useAdviserStore = defineStore('adviser', {
     }
   }),
   actions: {
-    getAdviser(adviserId) {
-      this.adviserSelected = this.advisers.find(adviser => adviser.id == adviserId);
+    async getAdviser(adviserId) {
+      useLoaderStore().loading = true;
+
+      try {
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${adviserId}`);
+        this.adviserSelected = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
     },
-    getAdvisers() {
-      this.advisers = advisers;
+    async getAdvisers() {
+      useLoaderStore().loading = true;
+
+      try {
+        const { data } = await axios.get('http://localhost:8000/api/v1/advisors');
+        this.advisers = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
     },
     getAllAdvicesByAdviserByDay() {
       this.adviserAdvicesByDay = adviserAdvicesByDay;
     },
     clearSelection() {
-      this.adviserSelected = {
-        id: undefined,
-        img: '',
-        name: '',
-        language: '',
-      };
+      this.adviserSelected = {};
     }
   }
 });

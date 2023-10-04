@@ -1,4 +1,5 @@
 <template>
+  <!-- Modal para Añadir un evento -->
   <section class="modal_wrap" v-if="showModalAddEvent">
     <div class="modal">
       <div class="modal_header">
@@ -65,14 +66,15 @@
     </div>
   </section>
 
-  <section class="modal_wrap" v-if="showModalEditEvent">
+  <!-- Modal para Editar un evento -->
+  <section class="modal_wrap" v-if="showModalEditEvent && eventSelected.id">
     <div class="modal">
       <div class="modal_header">
         <i class="fa-solid fa-xmark" @click="hideModalEditEvent"></i>
       </div>
 
       <div class="modal_body">
-        <h4 class="modal_title">Agregando la disponibilidad del asesor</h4>
+        <h4 class="modal_title">Editando la disponibilidad del asesor</h4>
         <h5 class="modal_subtitle">{{ adviserSelected.name }}</h5>
 
         <div class="d_flex items_start">
@@ -136,6 +138,7 @@
     </div>
   </section>
 
+  <!-- Modal para Añadir recurrencia a un evento -->
   <section class="modal_wrap" v-if="showModalAddRecurrence">
     <div class="modal">
       <div class="modal_header">
@@ -249,6 +252,7 @@
     </div>
   </section>
 
+  <!-- Modal para Editar la recurrencia de un evento -->
   <section class="modal_wrap" v-if="showModalEditRecurrence">
     <div class="modal">
       <div class="modal_header">
@@ -362,13 +366,14 @@
     </div>
   </section>
 
+  <!-- Sección para seleccionar un asesor -->
   <section class="d_flex flex_column w_60">
     <div class="card w_100 d_flex items_end justify_between">
       <div class="form_control_container">
         <label class="form_label_control">Selecciona un asesor:</label>
         <select class="form_control" style="margin-bottom:0;" v-model="filters.adviser">
           <option :value="null">...</option>
-          <option v-for="adviser in advisers" :key="adviser.id" :value="adviser">{{ adviser.name }}</option>
+          <option v-for="adviser in advisers" :key="adviser.id" :value="adviser">{{ adviser.user_detail.name }}</option>
         </select>
       </div>
 
@@ -380,6 +385,7 @@
     </section>
   </section>
 
+  <!-- Sección para mostrar los datos del asesor -->
   <section class="card data_container" v-if="adviserSelected.id">
     <div class="card_head">
       <div class="w_100 d_flex flex_row justify_between items_center">
@@ -401,11 +407,9 @@
 </template>
 
 <script setup>
-  import FullCalendar from "@fullcalendar/vue3";
-
-  import { ref, watch, inject, computed } from "vue";
-
   import { storeToRefs } from "pinia";
+  import FullCalendar from "@fullcalendar/vue3";
+  import { ref, watch, inject, computed } from "vue";
   import { useAdviserStore } from "../../stores/AdviserStore";
   import { useCalendarStore } from "../../stores/CalendarStore";
 
@@ -426,7 +430,7 @@
 
   const searchAdviserEvents = () => {
     adviserStore.getAdviser(filters.value.adviser.id);
-    calendarStore.getAdvisersDisponibility();
+    calendarStore.getAdvisersDisponibility(filters.value.adviser.id);
   };
 
   const saveNewEvent = () => {

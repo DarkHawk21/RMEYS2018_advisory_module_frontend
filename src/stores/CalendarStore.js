@@ -1,8 +1,10 @@
+import axios from 'axios';
 import { defineStore } from "pinia";
+import rrulePlugin from '@fullcalendar/rrule';
+import { useLoaderStore } from './LoaderStore';
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import advisersDisponibility from './db/advisersDisponibility.json';
 
 export const useCalendarStore = defineStore('calendar', {
   state: () => ({
@@ -18,7 +20,7 @@ export const useCalendarStore = defineStore('calendar', {
       slotMaxTime: "21:00:00",
       slotDuration: "00:30:00",
       initialView: "timeGridWeek",
-      plugins: [timeGridPlugin, dayGridPlugin, interactionPlugin],
+      plugins: [timeGridPlugin, dayGridPlugin, interactionPlugin, rrulePlugin],
       headerToolbar: {
         start: "today,prev,next",
         center: "title",
@@ -67,23 +69,37 @@ export const useCalendarStore = defineStore('calendar', {
     },
   }),
   actions: {
-    getAdvisersDisponibility() {
-      this.options.events = advisersDisponibility;
-    },
-    getEventData(eventId, moment) {
-      const eventFromDB = advisersDisponibility.find(adviserDisponibility => adviserDisponibility.id == eventId);
+    async getAdvisersDisponibility(advisorId) {
+      useLoaderStore().loading = true;
 
-      this.eventSelected = {
-        ...eventFromDB,
-        minTime: {
-          hours: parseInt(moment(eventFromDB.start).format("HH")),
-          minutes: parseInt(moment(eventFromDB.start).format("mm")),
-        },
-        maxTime: {
-          hours: parseInt(moment(eventFromDB.end).format("HH")) - 1,
-          minutes: parseInt(moment(eventFromDB.end).format("mm")),
-        }
-      };
+      try {
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${advisorId}/schedule`);
+        this.options.events = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
+    async getEventData(eventId, moment) {
+      useLoaderStore().loading = true;
+
+      try {
+        const { data } = await axios.get(`http://localhost:8000/api/v1/schedule/${eventId}`);
+        this.eventSelected = {
+          ...data,
+          minTime: {
+            hours: parseInt(moment(data.start).format("HH")),
+            minutes: parseInt(moment(data.start).format("mm")),
+          },
+          maxTime: {
+            hours: parseInt(moment(data.end).format("HH")) - 1,
+            minutes: parseInt(moment(data.end).format("mm")),
+          }
+        };
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
     },
     clearSelection() {
       this.eventSelected = {};

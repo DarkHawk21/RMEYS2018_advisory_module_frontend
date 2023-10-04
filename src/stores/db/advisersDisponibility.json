@@ -24,48 +24,7 @@
         "name": "Enrique Carranza Balderas"
       },
       "recurrenceType": "personalized",
-      "recurrence": {
-        "repeatTimes": {
-          "times": 1,
-          "type": "diary"
-        },
-        "repeatDays": [],
-        "finishAt": {
-          "type": "",
-          "value": ""
-        }
-      },
-      "availablePlaces": "5"
-    }
-  },
-  {
-    "id": "2",
-    "groupId": "2",
-    "title": "Jessica Guadalupe Hernández Rodriguez",
-    "startTime": "17:00:00",
-    "endTime": "19:00:00",
-    "startRecur": "2023-09-14",
-    "endRecur": "2023-10-29",
-    "backgroundColor": "#cf142b",
-    "borderColor": "#cf142b",
-    "textColor": "#fff",
-    "daysOfWeek": [3, 4],
-    "extendedProps": {
-      "timeStart": {
-        "hours": 10,
-        "minutes": 0
-      },
-      "timeEnd": {
-        "hours": 16,
-        "minutes": 0
-      },
-      "advisor": {
-        "id": "2",
-        "name": "Jessica Guadalupe Hernández Rodriguez",
-        "language": "Francés",
-        "img": "profile.png"
-      },
-      "recurrenceType": "personalized",
+
       "recurrence": {
         "repeatTimes": {
           "times": 1,
