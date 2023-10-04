@@ -1,70 +1,10 @@
 <template>
   <!-- Modal para Añadir un evento -->
-  <section class="modal_wrap" v-if="showModalAddEvent">
-    <div class="modal">
-      <div class="modal_header">
-        <i class="fa-solid fa-xmark" @click="hideModalAddEvent"></i>
-      </div>
-
-      <div class="modal_body">
-        <h4 class="modal_title">Agregando la disponibilidad del asesor</h4>
-        <h5 class="modal_subtitle">{{ adviserSelected.name }}</h5>
-
-        <div class="d_flex items_start">
-          <i class="fa-regular fa-clock" style="margin-top:1px;margin-right:20px;"></i>
-
-          <div class="form_control_container">
-            <div style="margin-bottom:20px;">
-              <VueDatePicker
-                v-model="newEvent.date"
-                :teleport="true"
-                :format="dateFormat"
-                :enable-time-picker="false"
-              />
-            </div>
-
-            <div class="d_flex items_center" style="margin-bottom:20px;">
-              <label style="margin-right:10px;">De</label>
-              <VueDatePicker
-                time-picker
-                v-model="newEvent.timeStart"
-                :teleport="true"
-                :minutesIncrement="30"
-                :minutes-grid-increment="30"
-                :min-time="newEvent.minTimeStart"
-                :max-time="newEvent.maxTimeStart"
-              />
-
-              <label style="margin:0 10px;">a</label>
-              <VueDatePicker
-                time-picker
-                v-model="newEvent.timeEnd"
-                :teleport="true"
-                :minutesIncrement="30"
-                :minutes-grid-increment="30"
-                :min-time="{ hours: newEvent.minTimeStart.hours + 1, minutes: newEvent.minTimeStart.minutes }"
-                :max-time="{ hours: newEvent.maxTimeStart.hours + 1, minutes: newEvent.maxTimeStart.minutes }"
-              />
-            </div>
-
-            <select class="form_control" style="margin-bottom:0px;" v-model="newEvent.recurrenceType">
-              <option value="">No se repite</option>
-              <option value="each-week">Cada semana, el {{ moment(newEvent.date).format("dddd") }}</option>
-              <option value="each-month">Cada mes, el día {{ moment(newEvent.date).format("D") }}</option>
-              <option value="each-year">Anualmente, el {{ moment(newEvent.date).format("D") }} de {{ moment(newEvent.date).format("MMMM") }}</option>
-              <option value="every-business-day">Todos los días hábiles (de lunes a viernes)</option>
-              <option value="personalized">Personalizado...</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal_footer">
-        <button class="btn bg_red" @click="hideModalAddEvent">Cancelar</button>
-        <button class="btn" @click="saveNewEvent">Guardar</button>
-      </div>
-    </div>
-  </section>
+  <ModalAddEvent
+    v-if="showModalAddEvent"
+    @save-new-event="saveNewEvent"
+    @hide-modal-add-event="hideModalAddEvent"
+  />
 
   <!-- Modal para Editar un evento -->
   <section class="modal_wrap" v-if="showModalEditEvent && eventSelected.id">
@@ -387,7 +327,7 @@
         </select>
       </div>
 
-      <button class="btn" @click="searchAdviserEvents" v-if="adviserSelected.id">Buscar</button>
+      <button class="btn" @click="searchAdviserEvents" v-if="filters.adviser">Buscar</button>
     </div>
 
     <section class="calendar_container w_100">
@@ -422,6 +362,7 @@
   import { ref, watch, inject, computed } from "vue";
   import { useAdviserStore } from "../../stores/AdviserStore";
   import { useCalendarStore } from "../../stores/CalendarStore";
+  import ModalAddEvent from '../../components/modals/ModalAddEvent.vue';
 
   const moment = inject("moment");
 
@@ -506,17 +447,6 @@
   );
 
   watch(
-    () => newEvent.value.timeStart,
-    (timeStart) => {
-      newEvent.value.timeEnd = {
-        hours: parseInt(timeStart.hours) + 1,
-        minutes: parseInt(timeStart.minutes),
-        seconds: parseInt(timeStart.seconds)
-      };
-    }
-  );
-
-  watch(
     () => eventSelected.value.timeStart,
     (timeStart) => {
       eventSelected.value.timeEnd = {
@@ -533,13 +463,24 @@
     return {
       ...options.value,
       dateClick: ({ date }) => {
-        showModalAddEvent.value = true;
-        newEvent.value.date = date;
-        newEvent.value.timeStart = {
-          hours: parseInt(moment(date).format('hh')),
-          minutes: parseInt(moment(date).format('mm')),
-          seconds: parseInt(moment(date).format('ss'))
-        };
+        if (adviserSelected) {
+          showModalAddEvent.value = true;
+          newEvent.value.date = date;
+
+          newEvent.value.timeStart = {
+            hours: parseInt(moment(date).format('hh')),
+            minutes: parseInt(moment(date).format('mm')),
+            seconds: parseInt(moment(date).format('ss'))
+          };
+
+          newEvent.value.timeEnd = {
+            hours: parseInt(newEvent.value.timeStart.hours) + 1,
+            minutes: parseInt(newEvent.value.timeStart.minutes),
+            seconds: parseInt(newEvent.value.timeStart.seconds)
+          };
+        } else {
+          alert("Selecciona un asesor.");
+        }
       },
       eventClick: ({event}) => {
         calendarStore.getEventData(event.id, moment);
@@ -551,5 +492,4 @@
 
 <style lang="scss">
   @import "../../assets/styles/components/calendar.scss";
-  @import "../../assets/styles/components/modal.scss";
 </style>
