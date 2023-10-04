@@ -7,85 +7,12 @@
   />
 
   <!-- Modal para Editar un evento -->
-  <section class="modal_wrap" v-if="showModalEditEvent && eventSelected.id">
-    <div class="modal">
-      <div class="modal_header">
-        <i class="fa-solid fa-xmark" @click="hideModalEditEvent"></i>
-      </div>
+  <ModalEditEvent
+    v-if="showModalEditEvent && eventSelected.id"
+    @save-edited-event="saveEditedEvent"
+    @hide-modal-edit-event="hideModalEditEvent"
+  />
 
-      <div class="modal_body">
-        <h4 class="modal_title">Editando la disponibilidad del asesor</h4>
-        <h5 class="modal_subtitle">{{ adviserSelected.name }}</h5>
-
-        <div class="d_flex items_start">
-          <i class="fa-regular fa-clock" style="margin-top:1px;margin-right:20px;"></i>
-
-          <div class="form_control_container">
-            <div style="margin-bottom:20px;">
-              <VueDatePicker
-                v-model="eventSelected.recurrence.startAt"
-                :teleport="true"
-                :format="dateFormat"
-                :enable-time-picker="false"
-                v-if="eventSelected.recurrence"
-              />
-
-              <VueDatePicker
-                v-model="eventSelected.start"
-                :teleport="true"
-                :format="dateFormat"
-                :enable-time-picker="false"
-                v-else
-              />
-            </div>
-
-            <div class="d_flex items_center" style="margin-bottom:20px;">
-              <label style="margin-right:10px;">De</label>
-              <VueDatePicker
-                time-picker
-                v-model="eventSelected.extendedProps.timeStart"
-                :teleport="true"
-                :minutesIncrement="30"
-                :minutes-grid-increment="30"
-                :min-time="newEvent.minTimeStart"
-                :max-time="newEvent.maxTimeStart"
-              />
-
-              <label style="margin:0 10px;">a</label>
-              <VueDatePicker
-                time-picker
-                v-model="eventSelected.extendedProps.timeEnd"
-                :teleport="true"
-                :minutesIncrement="30"
-                :minutes-grid-increment="30"
-                :min-time="{ hours: newEvent.minTimeStart.hours + 1, minutes: newEvent.minTimeStart.minutes }"
-                :max-time="{ hours: newEvent.maxTimeStart.hours + 1, minutes: newEvent.maxTimeStart.minutes }"
-              />
-            </div>
-
-            <select
-              class="form_control"
-              style="margin-bottom:0px;"
-              v-model="eventSelected.extendedProps.recurrenceType"
-              @change="showModalRecurrenceEdit(eventSelected.extendedProps.recurrenceType)"
-            >
-              <option value="">No se repite</option>
-              <option value="weekly">Cada semana, el {{ moment(eventSelected.recurrence.startAt).format("dddd") }}</option>
-              <option value="monthly">Cada mes, el día {{ moment(eventSelected.recurrence.startAt).format("D") }}</option>
-              <option value="yearly">Anualmente, el {{ moment(eventSelected.recurrence.startAt).format("D") }} de {{ moment(eventSelected.recurrence.startAt).format("MMMM") }}</option>
-              <option value="daily">Todos los días hábiles (de lunes a viernes)</option>
-              <option value="personalized">Personalizado...</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal_footer">
-        <button class="btn bg_red" @click="hideModalEditEvent">Cancelar</button>
-        <button class="btn" @click="saveEditedEvent">Guardar</button>
-      </div>
-    </div>
-  </section>
 
   <!-- Modal para Añadir recurrencia a un evento -->
   <section class="modal_wrap" v-if="showModalAddRecurrence">
@@ -363,6 +290,7 @@
   import { useAdviserStore } from "../../stores/AdviserStore";
   import { useCalendarStore } from "../../stores/CalendarStore";
   import ModalAddEvent from '../../components/modals/ModalAddEvent.vue';
+  import ModalEditEvent from '../../components/modals/ModalEditEvent.vue';
 
   const moment = inject("moment");
 
@@ -419,14 +347,6 @@
     showModalEditRecurrence.value = false;
   }
 
-  const dateFormat = (date) => {
-    const dayName = moment(date).format("dddd")[0].toUpperCase() + moment(date).format("dddd").substring(1);
-    const dayNumber = moment(date).format("D");
-    const monthName = moment(date).format("MMMM");
-
-    return `${dayName} ${dayNumber} de ${monthName}`;
-  };
-
   const showModalRecurrenceEdit = (recurrenceType) => {
     switch(recurrenceType) {
       case 'personalized':
@@ -443,17 +363,6 @@
           showModalAddRecurrence.value = true;
           break;
       }
-    }
-  );
-
-  watch(
-    () => eventSelected.value.timeStart,
-    (timeStart) => {
-      eventSelected.value.timeEnd = {
-        hours: parseInt(timeStart.hours) + 1,
-        minutes: parseInt(timeStart.minutes),
-        seconds: parseInt(timeStart.seconds)
-      };
     }
   );
 
