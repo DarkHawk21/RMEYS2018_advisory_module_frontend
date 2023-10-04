@@ -85,6 +85,7 @@ export const useCalendarStore = defineStore('calendar', {
 
       try {
         const { data } = await axios.get(`http://localhost:8000/api/v1/schedule/${eventId}`);
+
         this.eventSelected = {
           ...data,
           minTime: {
@@ -96,6 +97,7 @@ export const useCalendarStore = defineStore('calendar', {
             minutes: parseInt(moment(data.end).format("mm")),
           }
         };
+
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;

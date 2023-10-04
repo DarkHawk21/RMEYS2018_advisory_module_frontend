@@ -24,7 +24,6 @@
         "name": "Enrique Carranza Balderas"
       },
       "recurrenceType": "personalized",
-
       "recurrence": {
         "repeatTimes": {
           "times": 1,
@@ -36,6 +35,7 @@
           "value": ""
         }
       },
+
       "availablePlaces": "5"
     }
   }
