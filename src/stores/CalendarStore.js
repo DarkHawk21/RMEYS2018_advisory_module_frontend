@@ -43,6 +43,7 @@ export const useCalendarStore = defineStore('calendar', {
     newEvent: {
       date: '',
       title: '',
+      exdate: null,
       extendedProps: {
         timeStart: {},
         timeEnd: {},
@@ -60,8 +61,7 @@ export const useCalendarStore = defineStore('calendar', {
           finishAt: {
             type: "never",
             value: ""
-          },
-          exdate: null
+          }
         }
       },
       minTimeStart: {
@@ -79,7 +79,7 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        const { data } = await axios.get(`http://192.168.0.250:8000/api/v1/advisors/${advisorId}/schedule`);
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${advisorId}/schedule`);
         this.options.events = data;
         useLoaderStore().loading = false;
       } catch (error) {
@@ -90,7 +90,7 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        const { data } = await axios.get(`http://192.168.0.250:8000/api/v1/schedule/${eventId}`);
+        const { data } = await axios.get(`http://localhost:8000/api/v1/schedule/${eventId}`);
 
         this.eventSelected = {
           ...data,
@@ -113,8 +113,8 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        await axios.post(`http://192.168.0.250:8000/api/v1/schedule`, this.newEvent);
-        const { data } = await axios.get(`http://192.168.0.250:8000/api/v1/advisors/${this.newEvent.extendedProps.advisor.id}/schedule`);
+        await axios.post(`http://localhost:8000/api/v1/schedule`, this.newEvent);
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${this.newEvent.extendedProps.advisor.id}/schedule`);
         this.options.events = data;
         useLoaderStore().loading = false;
       } catch (error) {
@@ -128,6 +128,7 @@ export const useCalendarStore = defineStore('calendar', {
       this.newEvent = {
         date: '',
         title: '',
+        exdate: null,
         extendedProps: {
           timeStart: {},
           timeEnd: {},
@@ -146,7 +147,6 @@ export const useCalendarStore = defineStore('calendar', {
               type: "never",
               value: ""
             },
-            exdate: null
           }
         },
         minTimeStart: {

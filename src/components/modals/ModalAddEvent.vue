@@ -54,7 +54,7 @@
 
             <select
               class="form_control"
-              style="margin-bottom: 0px"
+              style="margin-bottom: 20px"
               @change="recurrenceTypeChanged"
               v-model="newEvent.extendedProps.recurrenceType"
             >
@@ -65,6 +65,25 @@
               <option value="daily">Todos los días hábiles (de lunes a viernes)</option>
               <option value="personalized">Personalizado...</option>
             </select>
+
+            <div style="margin-bottom: 0px" v-if="newEvent.extendedProps.recurrenceType != 'never'">
+              <label style="margin-bottom: 10px;display: block;">Excepto los días:</label>
+
+              <VueDatePicker
+                multi-dates
+                timezone="UTC"
+                format="dd/MM/yyyy"
+                v-model="newEvent.exdate"
+                :teleport="true"
+                :enable-time-picker="false"
+                :start-time="{
+                  hours: parseInt(moment(newEvent.date).format('h')),
+                  minutes: parseInt(moment(newEvent.date).format('mm'))
+                }"
+              />
+
+              <label v-for="exdate in newEvent.exdate" :key="exdate" style="margin: 10px 10px 0 0;display: inline-block;">{{ moment(exdate).format('D/M/Y') }}</label>
+            </div>
           </div>
         </div>
       </div>

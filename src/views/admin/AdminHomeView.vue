@@ -10,21 +10,22 @@
   <!-- Modal para Añadir recurrencia a un evento -->
   <ModalAddRecurrence
     v-if="showModalAddRecurrence"
-    @save-event-recurrence="showModalAddRecurrence = false"
+    @save-event-add-recurrence="showModalAddRecurrence = false"
     @hide-modal-add-recurrence="showModalAddRecurrence = false"
   />
 
   <!-- Modal para Editar un evento -->
   <ModalEditEvent
     v-if="showModalEditEvent && eventSelected.id"
-    @save-edited-event="saveEditedEvent"
+    @update-event="showModalEditEvent = false"
     @hide-modal-edit-event="showModalEditEvent = false"
+    @show-modal-edit-recurrence="showModalEditRecurrence = true"
   />
 
   <!-- Modal para Editar la recurrencia de un evento -->
   <ModalEditRecurrence
     v-if="showModalEditRecurrence"
-    @save-event-edit-recurrence="saveEventEditRecurrence"
+    @save-event-edit-recurrence="showModalEditRecurrence = false"
     @hide-modal-edit-recurrence="showModalEditRecurrence = false"
   />
 
@@ -99,12 +100,6 @@
     calendarStore.getAdvisersDisponibility(filters.value.adviser.id);
   };
 
-  const saveEditedEvent = () => {};
-
-  const saveEventEditRecurrence = () => {
-    showModalEditRecurrence.value = false;
-  }
-
   options.value.headerToolbar.end = "timeGridDay,timeGridWeek,dayGridMonth";
 
   const calendarOptions = computed(() => {
@@ -129,7 +124,7 @@
           alert("Selecciona un asesor.");
         }
       },
-      eventClick: ({event}) => {
+      eventClick: ({ event }) => {
         calendarStore.getEventData(event.id, moment);
         showModalEditEvent.value = true;
       }

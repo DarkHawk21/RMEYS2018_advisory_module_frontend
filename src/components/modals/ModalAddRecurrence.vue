@@ -87,7 +87,7 @@
 
       <div class="modal_footer">
         <button class="btn bg_red" @click="$emit('hideModalAddRecurrence')">Cancelar</button>
-        <button class="btn" @click="$emit('saveEventRecurrence')">Guardar</button>
+        <button class="btn" @click="$emit('saveEventAddRecurrence')">Guardar</button>
       </div>
     </div>
   </section>
