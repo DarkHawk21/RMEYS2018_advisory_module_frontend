@@ -30,6 +30,8 @@
                 :teleport="true"
                 :minutesIncrement="30"
                 :minutes-grid-increment="30"
+                :min-time="eventSelected.minTimeStart"
+                :max-time="eventSelected.maxTimeStart"
               />
 
               <label style="margin: 0 10px">a</label>
@@ -39,6 +41,14 @@
                 :teleport="true"
                 :minutesIncrement="30"
                 :minutes-grid-increment="30"
+                :min-time="{
+                  hours: eventSelected.minTimeStart.hours + 1,
+                  minutes: eventSelected.minTimeStart.minutes,
+                }"
+                :max-time="{
+                  hours: eventSelected.maxTimeStart.hours + 1,
+                  minutes: eventSelected.maxTimeStart.minutes,
+                }"
               />
             </div>
 
@@ -75,7 +85,8 @@
 
       <div class="modal_footer">
         <button class="btn bg_red" @click="$emit('hideModalEditEvent')">Cancelar</button>
-        <button class="btn" @click="updateEvent">Guardar</button>
+        <button class="btn bg_red" @click="deleteEvent">Eliminar</button>
+        <button class="btn" @click="updateEvent">Actualizar</button>
       </div>
     </div>
   </section>
@@ -84,6 +95,7 @@
 <script setup>
   import { inject } from "vue";
   import { storeToRefs } from "pinia";
+  import Swal from 'sweetalert2/dist/sweetalert2';
   import { useAdviserStore } from "../../stores/AdviserStore";
   import { useCalendarStore } from "../../stores/CalendarStore";
 
@@ -95,7 +107,7 @@
   const calendarStore = useCalendarStore();
   const { eventSelected } = storeToRefs(calendarStore);
 
-  const emit = defineEmits(['updateEvent', 'showModalEditRecurrence']);
+  const emit = defineEmits(['updateEvent', 'showModalEditRecurrence', 'deleteEvent']);
 
   const recurrenceTypeChanged = () => {
     if (eventSelected.value.extendedProps.recurrenceType == 'personalized') {
@@ -113,6 +125,27 @@
     await calendarStore.getAdvisersDisponibility(adviserSelected.value.id);
     calendarStore.clearEventSelected();
     emit('updateEvent');
+  };
+
+  const deleteEvent = async () => {
+    const { isConfirmed } = await Swal.fire({
+      icon: 'warning',
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Ok, Eliminar',
+      confirmButtonColor: 'green',
+      cancelButtonColor: '#d33',
+      title: '¡Atención!',
+      text: 'Ten en cuenta que se eliminará toda la información relacionada, incluyendo las inscripciones de los alumnos a asesorías dentro del horario que concuerda con este evento (si es que hay).'
+    });
+
+    if (isConfirmed) {
+      await calendarStore.deleteEvent();
+      await calendarStore.getAdvisersDisponibility(adviserSelected.value.id);
+      calendarStore.clearEventSelected();
+      emit('deleteEvent');
+    }
   };
 
   const dateFormat = (date) => {

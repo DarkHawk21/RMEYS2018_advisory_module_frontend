@@ -93,13 +93,13 @@ export const useCalendarStore = defineStore('calendar', {
 
         this.eventSelected = {
           ...data,
-          minTime: {
-            hours: parseInt(moment(data.start).format("HH")),
-            minutes: parseInt(moment(data.start).format("mm")),
+          minTimeStart: {
+            hours: 7,
+            minutes: 0
           },
-          maxTime: {
-            hours: parseInt(moment(data.end).format("HH")) - 1,
-            minutes: parseInt(moment(data.end).format("mm")),
+          maxTimeStart: {
+            hours: 20,
+            minutes: 0
           }
         };
 
@@ -123,6 +123,16 @@ export const useCalendarStore = defineStore('calendar', {
 
       try {
         await axios.put(`http://localhost:8000/api/v1/schedule/${this.eventSelected.id}`, this.eventSelected);
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
+    async deleteEvent() {
+      useLoaderStore().loading = true;
+
+      try {
+        await axios.delete(`http://localhost:8000/api/v1/schedule/${this.eventSelected.id}`);
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;

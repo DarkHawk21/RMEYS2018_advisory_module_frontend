@@ -17,6 +17,7 @@
   <!-- Modal para Editar un evento -->
   <ModalEditEvent
     v-if="showModalEditEvent && eventSelected.id"
+    @delete-event="showModalEditEvent = false"
     @update-event="showModalEditEvent = false"
     @hide-modal-edit-event="showModalEditEvent = false"
     @show-modal-edit-recurrence="showModalEditRecurrence = true"
