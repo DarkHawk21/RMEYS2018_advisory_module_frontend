@@ -2,8 +2,16 @@
   <!-- Modal para Añadir un evento -->
   <ModalAddEvent
     v-if="showModalAddEvent"
-    @save-new-event="saveNewEvent"
+    @save-new-event="showModalAddEvent = false"
     @hide-modal-add-event="showModalAddEvent = false"
+    @show-modal-add-recurrence="showModalAddRecurrence = true"
+  />
+
+  <!-- Modal para Añadir recurrencia a un evento -->
+  <ModalAddRecurrence
+    v-if="showModalAddRecurrence"
+    @save-event-recurrence="showModalAddRecurrence = false"
+    @hide-modal-add-recurrence="showModalAddRecurrence = false"
   />
 
   <!-- Modal para Editar un evento -->
@@ -11,13 +19,6 @@
     v-if="showModalEditEvent && eventSelected.id"
     @save-edited-event="saveEditedEvent"
     @hide-modal-edit-event="showModalEditEvent = false"
-  />
-
-  <!-- Modal para Añadir recurrencia a un evento -->
-  <ModalAddRecurrence
-    v-if="showModalAddRecurrence"
-    @save-event-recurrence="saveEventRecurrence"
-    @hide-modal-add-recurrence="showModalAddRecurrence = false"
   />
 
   <!-- Modal para Editar la recurrencia de un evento -->
@@ -98,20 +99,7 @@
     calendarStore.getAdvisersDisponibility(filters.value.adviser.id);
   };
 
-  const saveNewEvent = () => {
-    if (newEvent.value.timeStart.minutes != newEvent.value.timeEnd.minutes) {
-      alert("No se puede crear un evento en fracciones de menos de una hora.");
-      return;
-    }
-
-    showModalAddEvent.value = false;
-  };
-
   const saveEditedEvent = () => {};
-
-  const saveEventRecurrence = () => {
-    showModalAddRecurrence.value = false;
-  }
 
   const saveEventEditRecurrence = () => {
     showModalEditRecurrence.value = false;
@@ -124,20 +112,19 @@
       ...options.value,
       dateClick: ({ date }) => {
         if (adviserSelected) {
-          showModalAddEvent.value = true;
           newEvent.value.date = date;
 
-          newEvent.value.timeStart = {
-            hours: parseInt(moment(date).format('hh')),
+          newEvent.value.extendedProps.timeStart = {
+            hours: parseInt(moment(date).format('HH')),
             minutes: parseInt(moment(date).format('mm')),
-            seconds: parseInt(moment(date).format('ss'))
           };
 
-          newEvent.value.timeEnd = {
-            hours: parseInt(newEvent.value.timeStart.hours) + 1,
-            minutes: parseInt(newEvent.value.timeStart.minutes),
-            seconds: parseInt(newEvent.value.timeStart.seconds)
+          newEvent.value.extendedProps.timeEnd = {
+            hours: parseInt(newEvent.value.extendedProps.timeStart.hours) + 1,
+            minutes: parseInt(newEvent.value.extendedProps.timeStart.minutes),
           };
+
+          showModalAddEvent.value = true;
         } else {
           alert("Selecciona un asesor.");
         }

@@ -37,7 +37,7 @@
   const userStore = useUserStore();
   const { token } = storeToRefs(userStore);
 
-  const email = ref("enrique.carranza@keypro.com.mx");
+  const email = ref("admin@admin.com");
   const password = ref("Pass1234");
 
   const canLogin = computed(() => {

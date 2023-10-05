@@ -15,9 +15,9 @@
           <div class="form_control_container">
             <div style="margin-bottom: 20px">
               <VueDatePicker
-                v-model="newEvent.date"
                 :teleport="true"
                 :format="dateFormat"
+                v-model="newEvent.date"
                 :enable-time-picker="false"
               />
             </div>
@@ -26,7 +26,7 @@
               <label style="margin-right: 10px">De</label>
               <VueDatePicker
                 time-picker
-                v-model="newEvent.timeStart"
+                v-model="newEvent.extendedProps.timeStart"
                 :teleport="true"
                 :minutesIncrement="30"
                 :minutes-grid-increment="30"
@@ -37,7 +37,7 @@
               <label style="margin: 0 10px">a</label>
               <VueDatePicker
                 time-picker
-                v-model="newEvent.timeEnd"
+                v-model="newEvent.extendedProps.timeEnd"
                 :teleport="true"
                 :minutesIncrement="30"
                 :minutes-grid-increment="30"
@@ -52,11 +52,16 @@
               />
             </div>
 
-            <select class="form_control" style="margin-bottom: 0px" v-model="newEvent.recurrenceType">
-              <option value="">No se repite</option>
+            <select
+              class="form_control"
+              style="margin-bottom: 0px"
+              @change="recurrenceTypeChanged"
+              v-model="newEvent.extendedProps.recurrenceType"
+            >
+              <option value="never">No se repite</option>
               <option value="weekly">Cada semana, el {{ moment(newEvent.date).format("dddd") }}</option>
               <option value="monthly">Cada mes, el día {{ moment(newEvent.date).format("D") }}</option>
-              <option value="yearly">Anualmente, el {{ moment(newEvent.date).format("D") }} de{{ moment(newEvent.date).format("MMMM") }}</option>
+              <option value="yearly">Anualmente, el {{ moment(newEvent.date).format("D") }} de {{ moment(newEvent.date).format("MMMM") }}</option>
               <option value="daily">Todos los días hábiles (de lunes a viernes)</option>
               <option value="personalized">Personalizado...</option>
             </select>
@@ -66,7 +71,7 @@
 
       <div class="modal_footer">
         <button class="btn bg_red" @click="$emit('hideModalAddEvent')">Cancelar</button>
-        <button class="btn" @click="$emit('saveNewEvent')">Guardar</button>
+        <button class="btn" @click="saveNewEvent">Guardar</button>
       </div>
     </div>
   </section>
@@ -85,6 +90,28 @@
 
   const calendarStore = useCalendarStore();
   const { newEvent } = storeToRefs(calendarStore);
+
+  const emit = defineEmits(['saveNewEvent', 'showModalAddRecurrence']);
+
+  newEvent.value.title = adviserSelected.value.name;
+  newEvent.value.extendedProps.advisor.id = adviserSelected.value.id;
+
+  const recurrenceTypeChanged = () => {
+    if (newEvent.value.extendedProps.recurrenceType == 'personalized') {
+      emit('showModalAddRecurrence');
+    }
+  };
+
+  const saveNewEvent = async () => {
+    if (newEvent.value.extendedProps.timeStart.minutes != newEvent.value.extendedProps.timeEnd.minutes) {
+      alert("No se puede crear un evento en fracciones de menos o más de una hora.");
+      return;
+    }
+
+    await calendarStore.storeEvent();
+    calendarStore.clearNewEvent();
+    emit('saveNewEvent');
+  };
 
   const dateFormat = (date) => {
     const dayName = moment(date).format("dddd")[0].toUpperCase() + moment(date).format("dddd").substring(1);

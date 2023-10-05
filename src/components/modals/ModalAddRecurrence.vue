@@ -16,33 +16,33 @@
               min="1"
               class="form_control align_center"
               style="width: 70px; margin-right: 10px"
-              v-model="newEvent.recurrence.repeatTimes.times"
+              v-model="newEvent.extendedProps.recurrence.repeatTimes.times"
             />
 
-            <select class="form_control" style="width: 110px" v-model="newEvent.recurrence.repeatTimes.type">
-              <option value="diary">días</option>
+            <select class="form_control" style="width: 110px" v-model="newEvent.extendedProps.recurrence.repeatTimes.type">
+              <option value="daily">días</option>
               <option value="weekly">semanas</option>
               <option value="monthly">meses</option>
-              <option value="annual">años</option>
+              <option value="yearly">años</option>
             </select>
           </div>
 
           <div style="margin-bottom: 20px">
             <label class="form_label_control" style="margin-bottom: 20px">Repetir el</label>
 
-            <input type="checkbox" id="checkMonday" class="recurrence_checkbox" value="monday" v-model="newEvent.recurrence.repeatDays"/>
+            <input type="checkbox" id="checkMonday" class="recurrence_checkbox" value="mo" v-model="newEvent.extendedProps.recurrence.repeatDays"/>
             <label for="checkMonday" class="recurrence_label">L</label>
 
-            <input type="checkbox" id="checkTuesday" class="recurrence_checkbox" value="tuesday" v-model="newEvent.recurrence.repeatDays"/>
+            <input type="checkbox" id="checkTuesday" class="recurrence_checkbox" value="tu" v-model="newEvent.extendedProps.recurrence.repeatDays"/>
             <label for="checkTuesday" class="recurrence_label">M</label>
 
-            <input type="checkbox" id="checkWednesday" class="recurrence_checkbox" value="wednesday" v-model="newEvent.recurrence.repeatDays"/>
+            <input type="checkbox" id="checkWednesday" class="recurrence_checkbox" value="we" v-model="newEvent.extendedProps.recurrence.repeatDays"/>
             <label for="checkWednesday" class="recurrence_label">M</label>
 
-            <input type="checkbox" id="checkThursday" class="recurrence_checkbox" value="thursday" v-model="newEvent.recurrence.repeatDays"/>
+            <input type="checkbox" id="checkThursday" class="recurrence_checkbox" value="th" v-model="newEvent.extendedProps.recurrence.repeatDays"/>
             <label for="checkThursday" class="recurrence_label">J</label>
 
-            <input type="checkbox" id="checkFriday" class="recurrence_checkbox" value="friday" v-model="newEvent.recurrence.repeatDays"/>
+            <input type="checkbox" id="checkFriday" class="recurrence_checkbox" value="fr" v-model="newEvent.extendedProps.recurrence.repeatDays"/>
             <label for="checkFriday" class="recurrence_label">V</label>
           </div>
 
@@ -57,7 +57,7 @@
                 style="margin-right: 10px"
                 class="recurrence_radio"
                 name="recurrenceRadio"
-                v-model="newEvent.recurrence.finishAt.type"
+                v-model="newEvent.extendedProps.recurrence.finishAt.type"
               />
               <label for="radioEndNever">Nunca</label>
             </div>
@@ -70,42 +70,16 @@
                 style="margin-right: 10px"
                 class="recurrence_radio"
                 name="recurrenceRadio"
-                v-model="newEvent.recurrence.finishAt.type"
+                v-model="newEvent.extendedProps.recurrence.finishAt.type"
               />
 
               <label for="radioEndThe" style="margin-right: 80px">El</label>
 
               <VueDatePicker
-                :readonly="newEvent.recurrence.finishAt.type != 'date'"
-                v-model="newEvent.recurrence.finishAt.value"
+                :enable-time-picker="false"
+                :readonly="newEvent.extendedProps.recurrence.finishAt.type != 'date'"
+                v-model="newEvent.extendedProps.recurrence.finishAt.value"
               />
-            </div>
-
-            <div class="d_flex items_center">
-              <input
-                type="radio"
-                id="radioEndAfter"
-                value="times"
-                style="margin-right: 10px"
-                class="recurrence_radio"
-                name="recurrenceRadio"
-                v-model="newEvent.recurrence.finishAt.type"
-              />
-              <label
-                for="radioEndAfter"
-                style="margin-right: 12.5px; min-width: 80px"
-                >Después de</label
-              >
-
-              <input
-                type="number"
-                min="1"
-                class="form_control align_center"
-                style="width: 70px; margin-right: 10px; margin-bottom: 0"
-                :readonly="newEvent.recurrence.finishAt.type != 'times'"
-                v-model="newEvent.recurrence.finishAt.value"
-              />
-              <label>ocurrencias</label>
             </div>
           </div>
         </div>

@@ -42,31 +42,37 @@ export const useCalendarStore = defineStore('calendar', {
     eventSelected: {},
     newEvent: {
       date: '',
-      timeStart: {},
-      timeEnd: {},
-      recurrenceType: '',
-      recurrence: {
-        repeatTimes: {
-          times: 1,
-          type: 'diary'
+      title: '',
+      extendedProps: {
+        timeStart: {},
+        timeEnd: {},
+        advisor: {
+          id: null
         },
-        repeatDays: [],
-        finishAt: {
-          type: '',
-          value: ''
+        recurrenceType: 'never',
+        recurrence: {
+          startAt: '',
+          repeatTimes: {
+            times: 1,
+            type: "weekly"
+          },
+          repeatDays: [],
+          finishAt: {
+            type: "never",
+            value: ""
+          },
+          exdate: null
         }
       },
       minTimeStart: {
         hours: 7,
-        minutes: 0,
-        seconds: 0
+        minutes: 0
       },
       maxTimeStart: {
-        hours: 21,
-        minutes: 0,
-        seconds: 0
-      },
-    },
+        hours: 20,
+        minutes: 0
+      }
+    }
   }),
   actions: {
     async getAdvisersDisponibility(advisorId) {
@@ -103,8 +109,55 @@ export const useCalendarStore = defineStore('calendar', {
         useLoaderStore().loading = false;
       }
     },
+    async storeEvent() {
+      useLoaderStore().loading = true;
+
+      try {
+        await axios.post(`http://localhost:8000/api/v1/schedule`, this.newEvent);
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${this.newEvent.extendedProps.advisor.id}/schedule`);
+        this.options.events = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
     clearSelection() {
       this.eventSelected = {};
+    },
+    clearNewEvent() {
+      this.newEvent = {
+        date: '',
+        title: '',
+        extendedProps: {
+          timeStart: {},
+          timeEnd: {},
+          advisor: {
+            id: null
+          },
+          recurrenceType: 'never',
+          recurrence: {
+            startAt: '',
+            repeatTimes: {
+              times: 1,
+              type: "weekly"
+            },
+            repeatDays: [],
+            finishAt: {
+              type: "never",
+              value: ""
+            },
+            exdate: null
+          }
+        },
+        minTimeStart: {
+          hours: 7,
+          minutes: 0
+        },
+        maxTimeStart: {
+          hours: 20,
+          minutes: 0
+        }
+      };
     }
   }
 });
