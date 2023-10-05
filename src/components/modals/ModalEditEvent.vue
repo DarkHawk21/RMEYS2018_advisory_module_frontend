@@ -15,19 +15,10 @@
           <div class="form_control_container">
             <div style="margin-bottom: 20px">
               <VueDatePicker
-                v-model="eventSelected.recurrence.startAt"
+                v-model="eventSelected.date"
                 :teleport="true"
                 :format="dateFormat"
                 :enable-time-picker="false"
-                v-if="eventSelected.recurrence"
-              />
-
-              <VueDatePicker
-                v-model="eventSelected.start"
-                :teleport="true"
-                :format="dateFormat"
-                :enable-time-picker="false"
-                v-else
               />
             </div>
 
@@ -51,21 +42,40 @@
               />
             </div>
 
-            <select class="form_control" style="margin-bottom: 0px" v-model="eventSelected.extendedProps.recurrenceType">
-              <option value="">No se repite</option>
-              <option value="weekly">Cada semana, el {{ moment(eventSelected.recurrence.startAt).format("dddd") }}</option>
-              <option value="monthly">Cada mes, el día {{ moment(eventSelected.recurrence.startAt).format("D") }}</option>
-              <option value="yearly">Anualmente, el {{ moment(eventSelected.recurrence.startAt).format("D") }} de {{ moment(eventSelected.recurrence.startAt).format("MMMM") }}</option>
+            <select class="form_control" style="margin-bottom: 20px" @change="recurrenceTypeChanged" v-model="eventSelected.extendedProps.recurrenceType">
+              <option value="never">No se repite</option>
+              <option value="weekly">Cada semana, el {{ moment(eventSelected.date).format("dddd") }}</option>
+              <option value="monthly">Cada mes, el día {{ moment(eventSelected.date).format("D") }}</option>
+              <option value="yearly">Anualmente, el {{ moment(eventSelected.date).format("D") }} de {{ moment(eventSelected.date).format("MMMM") }}</option>
               <option value="daily">Todos los días hábiles (de lunes a viernes)</option>
               <option value="personalized">Personalizado...</option>
             </select>
+
+            <div style="margin-bottom: 0px" v-if="eventSelected.extendedProps.recurrenceType != 'never'">
+              <label style="margin-bottom: 10px;display: block;">Excepto los días:</label>
+
+              <VueDatePicker
+                multi-dates
+                timezone="UTC"
+                format="dd/MM/yyyy"
+                v-model="eventSelected.exdate"
+                :teleport="true"
+                :enable-time-picker="false"
+                :start-time="{
+                  hours: parseInt(moment(eventSelected.date).format('h')),
+                  minutes: parseInt(moment(eventSelected.date).format('mm'))
+                }"
+              />
+
+              <label v-for="exdate in eventSelected.exdate" :key="exdate" style="margin: 10px 10px 0 0;display: inline-block;">{{ moment(exdate).format('D/M/Y') }}</label>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="modal_footer">
         <button class="btn bg_red" @click="$emit('hideModalEditEvent')">Cancelar</button>
-        <button class="btn" @click="$emit('saveEditedEvent')">Guardar</button>
+        <button class="btn" @click="updateEvent">Guardar</button>
       </div>
     </div>
   </section>
@@ -84,6 +94,26 @@
 
   const calendarStore = useCalendarStore();
   const { eventSelected } = storeToRefs(calendarStore);
+
+  const emit = defineEmits(['updateEvent', 'showModalEditRecurrence']);
+
+  const recurrenceTypeChanged = () => {
+    if (eventSelected.value.extendedProps.recurrenceType == 'personalized') {
+      emit('showModalEditRecurrence');
+    }
+  };
+
+  const updateEvent = async () => {
+    if (eventSelected.value.extendedProps.timeStart.minutes != eventSelected.value.extendedProps.timeEnd.minutes) {
+      alert("No se puede editar un evento en fracciones de 30 minutos.");
+      return;
+    }
+
+    await calendarStore.updateEvent();
+    await calendarStore.getAdvisersDisponibility(adviserSelected.value.id);
+    calendarStore.clearEventSelected();
+    emit('updateEvent');
+  };
 
   const dateFormat = (date) => {
     const dayName = moment(date).format("dddd")[0].toUpperCase() + moment(date).format("dddd").substring(1);

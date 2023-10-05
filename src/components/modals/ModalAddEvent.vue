@@ -128,6 +128,7 @@
     }
 
     await calendarStore.storeEvent();
+    await calendarStore.getAdvisersDisponibility(adviserSelected.value.id);
     calendarStore.clearNewEvent();
     emit('saveNewEvent');
   };

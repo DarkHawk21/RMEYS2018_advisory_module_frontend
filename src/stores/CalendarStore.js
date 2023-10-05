@@ -43,7 +43,7 @@ export const useCalendarStore = defineStore('calendar', {
     newEvent: {
       date: '',
       title: '',
-      exdate: null,
+      exdate: [],
       extendedProps: {
         timeStart: {},
         timeEnd: {},
@@ -52,7 +52,6 @@ export const useCalendarStore = defineStore('calendar', {
         },
         recurrenceType: 'never',
         recurrence: {
-          startAt: '',
           repeatTimes: {
             times: 1,
             type: "weekly"
@@ -114,14 +113,22 @@ export const useCalendarStore = defineStore('calendar', {
 
       try {
         await axios.post(`http://localhost:8000/api/v1/schedule`, this.newEvent);
-        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${this.newEvent.extendedProps.advisor.id}/schedule`);
-        this.options.events = data;
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;
       }
     },
-    clearSelection() {
+    async updateEvent() {
+      useLoaderStore().loading = true;
+
+      try {
+        await axios.put(`http://localhost:8000/api/v1/schedule/${this.eventSelected.id}`, this.eventSelected);
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
+    clearEventSelected() {
       this.eventSelected = {};
     },
     clearNewEvent() {
@@ -137,7 +144,6 @@ export const useCalendarStore = defineStore('calendar', {
           },
           recurrenceType: 'never',
           recurrence: {
-            startAt: '',
             repeatTimes: {
               times: 1,
               type: "weekly"
