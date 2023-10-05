@@ -54,10 +54,6 @@
     <div class="card_head">
       <div class="w_100 d_flex flex_row justify_between items_center">
         <h4>Has seleccionado:</h4>
-
-        <button @click="adviserStore.clearSelection" class="btn bg_red">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
       </div>
 
       <div class="adviser_img_container">
