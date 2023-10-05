@@ -111,7 +111,7 @@
     return {
       ...options.value,
       dateClick: ({ date }) => {
-        if (adviserSelected) {
+        if (adviserSelected.value.id) {
           newEvent.value.date = date;
 
           newEvent.value.extendedProps.timeStart = {

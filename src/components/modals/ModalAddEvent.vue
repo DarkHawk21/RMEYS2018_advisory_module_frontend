@@ -104,7 +104,7 @@
 
   const saveNewEvent = async () => {
     if (newEvent.value.extendedProps.timeStart.minutes != newEvent.value.extendedProps.timeEnd.minutes) {
-      alert("No se puede crear un evento en fracciones de menos o más de una hora.");
+      alert("No se puede crear un evento en fracciones de 30 minutos.");
       return;
     }
 

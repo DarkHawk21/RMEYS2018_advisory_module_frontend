@@ -17,7 +17,7 @@ export const useAdviserStore = defineStore('adviser', {
       useLoaderStore().loading = true;
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${adviserId}`);
+        const { data } = await axios.get(`http://192.168.0.250:8000/api/v1/advisors/${adviserId}`);
         this.adviserSelected = data;
         useLoaderStore().loading = false;
       } catch (error) {
@@ -28,7 +28,7 @@ export const useAdviserStore = defineStore('adviser', {
       useLoaderStore().loading = true;
 
       try {
-        const { data } = await axios.get('http://localhost:8000/api/v1/advisors');
+        const { data } = await axios.get('http://192.168.0.250:8000/api/v1/advisors');
         this.advisers = data;
         useLoaderStore().loading = false;
       } catch (error) {
