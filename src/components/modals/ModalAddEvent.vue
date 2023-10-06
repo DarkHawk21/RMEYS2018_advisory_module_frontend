@@ -129,6 +129,8 @@
 
     await calendarStore.storeEvent();
     await calendarStore.getAdvisersDisponibility(adviserSelected.value.id);
+    await calendarStore.getWorkshopsByAdvisor(adviserSelected.value.id);
+    calendarStore.buildArrayOfEventsToCalendar();
     calendarStore.clearNewEvent();
     emit('saveNewEvent');
   };

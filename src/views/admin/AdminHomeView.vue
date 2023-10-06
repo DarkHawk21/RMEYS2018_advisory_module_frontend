@@ -92,9 +92,11 @@
   let showModalEditEvent = ref(false);
   let showModalEditRecurrence = ref(false);
 
-  const searchAdviserEvents = () => {
-    adviserStore.getAdviser(filters.value.adviser.id);
-    calendarStore.getAdvisersDisponibility(filters.value.adviser.id);
+  const searchAdviserEvents = async () => {
+    await adviserStore.getAdviser(filters.value.adviser.id);
+    await calendarStore.getAdvisersDisponibility(filters.value.adviser.id);
+    await calendarStore.getWorkshopsByAdvisor(filters.value.adviser.id);
+    calendarStore.buildArrayOfEventsToCalendar();
   };
 
   options.value.headerToolbar.end = "timeGridDay,timeGridWeek,dayGridMonth";

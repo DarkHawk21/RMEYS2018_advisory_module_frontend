@@ -123,6 +123,8 @@
 
     await calendarStore.updateEvent();
     await calendarStore.getAdvisersDisponibility(adviserSelected.value.id);
+    await calendarStore.getWorkshopsByAdvisor(adviserSelected.value.id);
+    calendarStore.buildArrayOfEventsToCalendar();
     calendarStore.clearEventSelected();
     emit('updateEvent');
   };
@@ -143,6 +145,8 @@
     if (isConfirmed) {
       await calendarStore.deleteEvent();
       await calendarStore.getAdvisersDisponibility(adviserSelected.value.id);
+      await calendarStore.getWorkshopsByAdvisor(adviserSelected.value.id);
+      calendarStore.buildArrayOfEventsToCalendar();
       calendarStore.clearEventSelected();
       emit('deleteEvent');
     }

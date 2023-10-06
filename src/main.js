@@ -1,4 +1,4 @@
-import 'moment/dist/locale/es';
+import 'moment/dist/locale/es-mx';
 import './assets/styles/main.scss';
 import '@vuepic/vue-datepicker/dist/main.css';
 
@@ -14,7 +14,7 @@ import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
 
-moment.locale('es');
+moment.locale('es-mx');
 
 const app = createApp(App);
 
