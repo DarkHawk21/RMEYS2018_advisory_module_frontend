@@ -33,11 +33,25 @@
       <!-- <h5 class="max_selected align_center">Quedan {{ eventSelected.extendedProps.availablePlaces }} lugares disponibles</h5> -->
 
       <label class="form_label_control">No. de cuenta:</label>
-      <input type="text" class="form_control" placeholder="número de cuenta" v-model="newAdvisory.studentAccount"/>
+      <input
+        type="text"
+        class="form_control"
+        placeholder="número de cuenta"
+        v-model="newAdvisory.studentAccount"
+      />
+
+      <div class="student_container" v-if="studentSelected.id">
+        <p>{{ `${studentSelected.nombre} ${studentSelected.appat} ${studentSelected.apmat}` }}</p>
+        <p>Grupo {{ `${studentSelected.grupo}` }}</p>
+      </div>
+
+      <div class="student_container" v-if="newAdvisory.studentAccount && !studentSelected.id">
+        <p>Alumno no encontrado.</p>
+      </div>
     </div>
 
     <div class="card_footer">
-      <button class="btn w_100" @click="buttonReserveClicked">Inscribirse</button>
+      <button class="btn w_100" v-if="studentSelected.id" @click="buttonReserveClicked">Inscribirse</button>
     </div>
   </section>
 </template>
@@ -45,20 +59,19 @@
 <script setup>
   import { storeToRefs } from "pinia";
   import FullCalendar from "@fullcalendar/vue3";
-  import { ref, inject, computed, onMounted } from "vue";
+  import { ref, inject, computed, onMounted, watch } from "vue";
   import { useCalendarStore } from "../../stores/CalendarStore";
+  import { useAdvisoryStore } from "../../stores/AdvisoryStore";
 
   const moment = inject("moment");
 
   const calendarStore = useCalendarStore();
   const { options, eventSelected, workshopsFetched } = storeToRefs(calendarStore);
 
+  const advisoryStore = useAdvisoryStore();
+  const { newAdvisory, studentSelected } = storeToRefs(advisoryStore);
+
   const possibleHoursToRegister = ref([]);
-  const newAdvisory = ref({
-    event: {},
-    selectedHour: {},
-    studentAccount: ''
-  });
 
   onMounted(async () => {
     await calendarStore.getAllAdvisersDisponibility();
@@ -90,6 +103,8 @@
 
   const clearEventSelected = () => {
     calendarStore.clearEventSelected();
+    advisoryStore.clearNewAdvisory();
+    advisoryStore.clearStudentSelected();
     possibleHoursToRegister.value = [];
   };
 
@@ -100,6 +115,15 @@
 
     return `${dayName} ${dayNumber} de ${monthName}`;
   });
+
+  watch(
+    () => newAdvisory.value.studentAccount,
+    (studentAccount) => {
+      if (studentAccount) {
+        advisoryStore.getStudent(studentAccount);
+      }
+    }
+  );
 
   const calendarOptions = computed(() => {
     return {
