@@ -24,8 +24,7 @@ export const useAdvisoryStore = defineStore('advisory', {
       useLoaderStore().loading = true;
 
       try {
-        const { data } = await axios.post(`http://localhost:8000/api/v1/advisories`, this.newAdvisory);
-        console.log(data);
+        await axios.post(`http://localhost:8000/api/v1/advisories`, this.newAdvisory);
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;

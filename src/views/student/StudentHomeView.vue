@@ -51,7 +51,11 @@
     </div>
 
     <div class="card_footer">
-      <button class="btn w_100" v-if="studentSelected.id" @click="buttonReserveClicked">Inscribirse</button>
+      <button
+        class="btn w_100"
+        v-if="studentSelected.id"
+        @click="buttonReserveClicked"
+      >Inscribirse</button>
     </div>
   </section>
 </template>
@@ -59,6 +63,7 @@
 <script setup>
   import { storeToRefs } from "pinia";
   import FullCalendar from "@fullcalendar/vue3";
+  import Swal from 'sweetalert2/dist/sweetalert2';
   import { ref, inject, computed, onMounted, watch } from "vue";
   import { useCalendarStore } from "../../stores/CalendarStore";
   import { useAdvisoryStore } from "../../stores/AdvisoryStore";
@@ -79,26 +84,18 @@
     calendarStore.buildArrayOfEventsToCalendar();
   });
 
-  const buttonReserveClicked = () => {
-    let textAlert = '';
+  const buttonReserveClicked = async () => {
+    await advisoryStore.enrollStudent();
 
-    if (newAdvisory.value.event == {}) {
-      textAlert += 'Selecciona un día.';
-    }
-
-    if (newAdvisory.value.selectedHour == {}) {
-      textAlert += 'Selecciona un horario.';
-    }
-
-    if (newAdvisory.value.studentAccount == '') {
-      textAlert += 'Introduce tu número de cuenta.';
-    }
-
-    if (textAlert !== '') {
-      alert(textAlert);
-    } else {
-      alert("Inscrito");
-    }
+    Swal.fire({
+      icon: 'success',
+      showCancelButton: false,
+      showConfirmButton: true,
+      confirmButtonText: '¡Excelente, gracias!',
+      confirmButtonColor: 'green',
+      title: '¡Te has inscrito correctamente!',
+      text: ''
+    });
   };
 
   const clearEventSelected = () => {
@@ -150,7 +147,7 @@
 
         for(let i = 0; i < eventSelectedTotalHours; i++) {
           const workshopInHourSchedule = workshopsFetched.value.find(
-            workshop => workshop.start == `${eventDateStart} ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : '30'}:00`
+            workshop => workshop.start == `${eventDateStart} ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : eventSelectedTimeStartMinutes}:00`
               && workshop.userId == eventSelectedAdvisorId
           );
 
@@ -158,16 +155,20 @@
             const option = {
               text: `
                 De ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : '30'}
-                a ${eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))}:${eventSelectedTimeEndMinutes == 0 ? '00' : '30'}
+                a ${eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))}:${eventSelectedTimeEndMinutes == 0 ? '00' : eventSelectedTimeEndMinutes}
               `,
               value: {
                 timeStart: {
-                  hours: (eventSelectedTimeStartHours + i),
-                  minutes: eventSelectedTimeStartMinutes
+                  hours: moment(`${eventDateStart} ${(eventSelectedTimeStartHours + i)}:00:00`).format('HH'),
+                  minutes: eventSelectedTimeStartMinutes == 0
+                    ? '00'
+                    : eventSelectedTimeStartMinutes
                 },
                 timeEnd: {
-                  hours: (eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))),
-                  minutes: eventSelectedTimeEndMinutes
+                  hours: moment(`${eventDateEnd} ${(eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1)))}:00:00`).format('HH'),
+                  minutes: eventSelectedTimeEndMinutes == 0
+                    ? '00'
+                    : eventSelectedTimeEndMinutes
                 }
               },
             };
