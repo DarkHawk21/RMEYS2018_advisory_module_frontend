@@ -8,7 +8,7 @@
       <div class="w_100 d_flex flex_row justify_between items_center">
         <h4>Has seleccionado:</h4>
 
-        <button @click="calendarStore.clearSelection" class="btn bg_red">
+        <button @click="clearEventSelected" class="btn bg_red">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -24,63 +24,74 @@
     <div class="card_body">
       <h5 class="day_selected align_center">{{ selectedDay }}</h5>
 
-      <label class="form_label_control">De:</label>
-      <VueDatePicker
-        v-model="newAdvisory.startTime"
-        time-picker
-        :min-time="eventSelected.minTime"
-        :max-time="eventSelected.maxTime"
-        :minutesIncrement="60"
-        :minutes-grid-increment="60"
-      ></VueDatePicker>
+      <label class="form_label_control">Selecciona una hora:</label>
 
-      <label class="form_label_control">A:</label>
-      <VueDatePicker
-        v-model="newAdvisory.endTime"
-        time-picker
-        readonly
-      ></VueDatePicker>
+      <select class="form_control" v-model="newAdvisory.selectedHour">
+        <option v-for="hour in possibleHoursToRegister" :key="hour" :value="hour.value">{{ hour.text }}</option>
+      </select>
 
-      <h5 class="max_selected align_center">Quedan {{ eventSelected.extendedProps.availablePlaces }} lugares disponibles</h5>
+      <!-- <h5 class="max_selected align_center">Quedan {{ eventSelected.extendedProps.availablePlaces }} lugares disponibles</h5> -->
 
       <label class="form_label_control">No. de cuenta:</label>
-      <input
-        type="text"
-        class="form_control"
-        placeholder="número de cuenta"
-        v-model="newAdvisory.studentAccount"
-        v-if="newAdvisory.startTime"
-      />
+      <input type="text" class="form_control" placeholder="número de cuenta" v-model="newAdvisory.studentAccount"/>
     </div>
 
     <div class="card_footer">
-      <button
-        class="btn w_100"
-        @click="buttonReserveClicked"
-        v-if="newAdvisory.studentAccount"
-      >Reservar</button>
+      <button class="btn w_100" @click="buttonReserveClicked">Inscribirse</button>
     </div>
   </section>
 </template>
 
 <script setup>
-  import FullCalendar from "@fullcalendar/vue3";
-  import { watch, inject, computed } from "vue";
   import { storeToRefs } from "pinia";
-  import { useAdvisoryStore } from '../../stores/AdvisoryStore';
+  import FullCalendar from "@fullcalendar/vue3";
+  import { ref, inject, computed, onMounted } from "vue";
   import { useCalendarStore } from "../../stores/CalendarStore";
 
   const moment = inject("moment");
 
   const calendarStore = useCalendarStore();
-  const { options, eventSelected } = storeToRefs(calendarStore);
+  const { options, eventSelected, workshopsFetched } = storeToRefs(calendarStore);
 
-  const advisoryStore = useAdvisoryStore();
-  const { newAdvisory } = storeToRefs(advisoryStore);
+  const possibleHoursToRegister = ref([]);
+  const newAdvisory = ref({
+    event: {},
+    selectedHour: {},
+    studentAccount: ''
+  });
 
-  calendarStore.getAdvisersDisponibility();
+  onMounted(async () => {
+    await calendarStore.getAllAdvisersDisponibility();
+    await calendarStore.getAllWorkshops();
+    calendarStore.buildArrayOfEventsToCalendar();
+  });
 
-  const buttonReserveClicked = () => {};
+  const buttonReserveClicked = () => {
+    let textAlert = '';
+
+    if (newAdvisory.value.event == {}) {
+      textAlert += 'Selecciona un día.';
+    }
+
+    if (newAdvisory.value.selectedHour == {}) {
+      textAlert += 'Selecciona un horario.';
+    }
+
+    if (newAdvisory.value.studentAccount == '') {
+      textAlert += 'Introduce tu número de cuenta.';
+    }
+
+    if (textAlert !== '') {
+      alert(textAlert);
+    } else {
+      alert("Inscrito");
+    }
+  };
+
+  const clearEventSelected = () => {
+    calendarStore.clearEventSelected();
+    possibleHoursToRegister.value = [];
+  };
 
   const selectedDay = computed(() => {
     const dayName = moment(eventSelected.value.start).format("dddd")[0].toUpperCase() + moment(eventSelected.value.start).format("dddd").substring(1);
@@ -90,24 +101,63 @@
     return `${dayName} ${dayNumber} de ${monthName}`;
   });
 
-  const calendarOptions = {
-    ...options.value,
-    eventClick: ({event}) => {
-      calendarStore.getEventData(event.id, moment);
-    }
-  };
+  const calendarOptions = computed(() => {
+    return {
+      ...options.value,
+      eventClick: async ({ event }) => {
+        await calendarStore.getEventData(event.id, moment);
 
-  watch(
-    () => advisoryStore.newAdvisory.startTime,
-    (startTime) => {
-      if (startTime) {
-        newAdvisory.value.endTime = {
-          hours: startTime.hours + 1,
-          minutes: 0,
-        };
+        possibleHoursToRegister.value = [];
+        newAdvisory.value.event = eventSelected.value;
+        const eventDateStart = moment(event._instance.range.start).format('Y-MM-DD');
+        const eventDateEnd = moment(event._instance.range.end).format('Y-MM-DD');
+        const eventTimeStart = moment.utc(event._instance.range.start).format('HH:mm:ss');
+        const eventTimeEnd = moment.utc(event._instance.range.end).format('HH:mm:ss');
+        const eventSelectedTimeEndHours = eventSelected.value.extendedProps.timeEnd.hours;
+        const eventSelectedTimeStartHours = eventSelected.value.extendedProps.timeStart.hours;
+        const eventSelectedTimeStartMinutes = eventSelected.value.extendedProps.timeStart.minutes;
+        const eventSelectedTimeEndMinutes = eventSelected.value.extendedProps.timeEnd.minutes;
+        const eventSelectedAdvisorId = eventSelected.value.extendedProps.advisor.id;
+
+        eventSelected.value.start = `${eventDateStart}T${eventTimeStart}`;
+        eventSelected.value.end = `${eventDateEnd}T${eventTimeEnd}`;
+
+        const eventSelectedTotalHours = eventSelectedTimeEndHours - eventSelectedTimeStartHours;
+
+        for(let i = 0; i < eventSelectedTotalHours; i++) {
+          const workshopInHourSchedule = workshopsFetched.value.find(
+            workshop => workshop.start == `${eventDateStart} ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : '30'}:00`
+              && workshop.userId == eventSelectedAdvisorId
+          );
+
+          if (!workshopInHourSchedule) {
+            const option = {
+              text: `
+                De ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : '30'}
+                a ${eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))}:${eventSelectedTimeEndMinutes == 0 ? '00' : '30'}
+              `,
+              value: {
+                timeStart: {
+                  hours: (eventSelectedTimeStartHours + i),
+                  minutes: eventSelectedTimeStartMinutes
+                },
+                timeEnd: {
+                  hours: (eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))),
+                  minutes: eventSelectedTimeEndMinutes
+                }
+              },
+            };
+
+            if (i === 0) {
+              newAdvisory.value.selectedHour = option.value;
+            }
+
+            possibleHoursToRegister.value.push(option);
+          }
+        }
       }
-    }
-  );
+    };
+  });
 </script>
 
 <style lang="scss">

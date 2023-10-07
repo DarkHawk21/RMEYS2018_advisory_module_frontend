@@ -109,8 +109,8 @@
           newEvent.value.date = date;
 
           newEvent.value.extendedProps.timeStart = {
-            hours: parseInt(moment(date).format('HH')),
-            minutes: parseInt(moment(date).format('mm')),
+            hours: parseInt(moment.utc(date).format('HH')),
+            minutes: parseInt(moment.utc(date).format('mm')),
           };
 
           newEvent.value.extendedProps.timeEnd = {
@@ -123,8 +123,8 @@
           alert("Selecciona un asesor.");
         }
       },
-      eventClick: ({ event }) => {
-        calendarStore.getEventData(event.id, moment);
+      eventClick: async ({ event }) => {
+        await calendarStore.getEventData(event.id, moment);
         showModalEditEvent.value = true;
       }
     };

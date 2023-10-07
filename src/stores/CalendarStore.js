@@ -76,12 +76,24 @@ export const useCalendarStore = defineStore('calendar', {
     workshopsFetched: []
   }),
   actions: {
+    async getAllAdvisersDisponibility() {
+      useLoaderStore().loading = true;
+      this.options.events = [];
+
+      try {
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/schedule`);
+        this.eventsFetched = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
     async getAdvisersDisponibility(advisorId) {
       useLoaderStore().loading = true;
       this.options.events = [];
 
       try {
-        const { data } = await axios.get(`http://192.168.1.68:8000/api/v1/advisors/${advisorId}/schedule`);
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${advisorId}/schedule`);
         this.eventsFetched = data;
         useLoaderStore().loading = false;
       } catch (error) {
@@ -92,7 +104,7 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        const { data } = await axios.get(`http://192.168.1.68:8000/api/v1/schedule/${eventId}`);
+        const { data } = await axios.get(`http://localhost:8000/api/v1/schedule/${eventId}`);
 
         this.eventSelected = {
           ...data,
@@ -115,7 +127,7 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        await axios.post(`http://192.168.1.68:8000/api/v1/schedule`, this.newEvent);
+        await axios.post(`http://localhost:8000/api/v1/schedule`, this.newEvent);
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;
@@ -125,7 +137,7 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        await axios.put(`http://192.168.1.68:8000/api/v1/schedule/${this.eventSelected.id}`, this.eventSelected);
+        await axios.put(`http://localhost:8000/api/v1/schedule/${this.eventSelected.id}`, this.eventSelected);
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;
@@ -135,7 +147,7 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        await axios.delete(`http://192.168.1.68:8000/api/v1/schedule/${this.eventSelected.id}`);
+        await axios.delete(`http://localhost:8000/api/v1/schedule/${this.eventSelected.id}`);
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;
@@ -178,12 +190,24 @@ export const useCalendarStore = defineStore('calendar', {
         }
       };
     },
+    async getAllWorkshops() {
+      useLoaderStore().loading = true;
+      this.options.events = [];
+
+      try {
+        const { data } = await axios.get(`http://localhost:8000/api/v1/workshops`);
+        this.workshopsFetched = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
     async getWorkshopsByAdvisor(advisorId) {
       useLoaderStore().loading = true;
       this.options.events = [];
 
       try {
-        const { data } = await axios.get(`http://192.168.1.68:8000/api/v1/advisors/${advisorId}/workshops`);
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${advisorId}/workshops`);
         this.workshopsFetched = data;
         useLoaderStore().loading = false;
       } catch (error) {
