@@ -1,3 +1,26 @@
+#btnBackToRMEYS {
+  background: rgba($red, 0.8);
+  border-radius: 7px 0 0 7px;
+  color: $white;
+  position: fixed;
+  right: 0;
+  bottom: 20px;
+  padding: 10px 20px;
+  z-index: 100;
+  display: block;
+  text-decoration: none;
+  font-size: 20px;
+  letter-spacing: 1px;
+  transition: ease all 0.3s;
+
+  &:hover {
+    transform: scale(1.1);
+    background: rgba($red, 1);
+    text-shadow: 1px 1px 1px rgba($black, 0.5);
+    box-shadow: 1px 1px 1px rgba($red, 0.5);
+  }
+}
+
 .data_container {
   width: 40%;
   padding: 20px;

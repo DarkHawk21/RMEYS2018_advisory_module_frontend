@@ -71,6 +71,8 @@
       >Registrar Entrada</button>
     </div>
   </section>
+
+  <a href="http://localhost/PlataformaRMEYS2018" id="btnBackToRMEYS">Regresar</a>
 </template>
 
 <script setup>
@@ -106,7 +108,7 @@
   const buttonReserveClicked = async () => {
     await advisoryStore.enrollStudent();
 
-    Swal.fire({
+    await Swal.fire({
       icon: 'success',
       showCancelButton: false,
       showConfirmButton: true,
@@ -115,6 +117,8 @@
       title: '¡Te has inscrito correctamente!',
       text: ''
     });
+
+    clearEventSelected();
   };
 
   const buttonCheckInClicked = async () => {
