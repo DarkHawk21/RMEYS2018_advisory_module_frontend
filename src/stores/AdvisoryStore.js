@@ -4,6 +4,7 @@ import { useLoaderStore } from './LoaderStore';
 
 export const useAdvisoryStore = defineStore('advisory', {
   state: () => ({
+    advisories: [],
     newAdvisory: {
       event: {},
       selectedHour: {},
@@ -15,6 +16,17 @@ export const useAdvisoryStore = defineStore('advisory', {
     studentHasCheckInAtThisHour: false
   }),
   actions: {
+    async getAllByAdvisor(advisorId) {
+      useLoaderStore().loading = true;
+
+      try {
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${advisorId}/advisories`);
+        this.advisories = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
     async getStudent(studentAccount) {
       try {
         const { data } = await axios.get(`http://localhost:8000/api/v1/students/${studentAccount}`);
