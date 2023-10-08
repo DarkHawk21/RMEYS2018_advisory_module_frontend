@@ -30,15 +30,22 @@
         <option v-for="hour in possibleHoursToRegister" :key="hour" :value="hour.value">{{ hour.text }}</option>
       </select>
 
-      <!-- <h5 class="max_selected align_center">Quedan {{ eventSelected.extendedProps.availablePlaces }} lugares disponibles</h5> -->
+      <template v-if="selectedHourQuote">
+        <h5 class="max_selected align_center">Quedan {{ selectedHourQuote }} lugares disponibles</h5>
 
-      <label class="form_label_control">No. de cuenta:</label>
-      <input
-        type="text"
-        class="form_control"
-        placeholder="número de cuenta"
-        v-model="newAdvisory.studentAccount"
-      />
+        <label class="form_label_control">No. de cuenta:</label>
+
+        <input
+          type="text"
+          class="form_control"
+          placeholder="número de cuenta"
+          v-model="newAdvisory.studentAccount"
+        />
+      </template>
+
+      <template v-else>
+        <h5 class="max_selected align_center">¡Ups! El horario que elegiste está lleno, por favor intenta con uno diferente.</h5>
+      </template>
 
       <div class="student_container" v-if="studentSelected.id">
         <p>{{ `${studentSelected.nombre} ${studentSelected.appat} ${studentSelected.apmat}` }}</p>
@@ -48,12 +55,16 @@
       <div class="student_container" v-if="newAdvisory.studentAccount && !studentSelected.id">
         <p>Alumno no encontrado.</p>
       </div>
+
+      <template v-if="studentIsEnrolledAtThisHour">
+        <h5 class="max_selected align_center">Ya estás inscrito en este horario.</h5>
+      </template>
     </div>
 
     <div class="card_footer">
       <button
         class="btn w_100"
-        v-if="studentSelected.id"
+        v-if="studentSelected.id && !studentIsEnrolledAtThisHour"
         @click="buttonReserveClicked"
       >Inscribirse</button>
     </div>
@@ -74,7 +85,7 @@
   const { options, eventSelected, workshopsFetched } = storeToRefs(calendarStore);
 
   const advisoryStore = useAdvisoryStore();
-  const { newAdvisory, studentSelected } = storeToRefs(advisoryStore);
+  const { newAdvisory, studentSelected, selectedHourQuote, studentIsEnrolledAtThisHour } = storeToRefs(advisoryStore);
 
   const possibleHoursToRegister = ref([]);
 
@@ -114,9 +125,29 @@
   });
 
   watch(
+    () => newAdvisory.value.selectedHour,
+    (selectedHour) => {
+      if (selectedHour) {
+        const scheduleEventId = eventSelected.value.id;
+        const selectedDate = moment(eventSelected.value.start).format('Y-MM-DD');
+        const selectedTimeStart = `${selectedHour.timeStart.hours}:${selectedHour.timeStart.minutes}:00`;
+        advisoryStore.getAdvisoryDisponibility(scheduleEventId, selectedDate, selectedTimeStart);
+
+        if (studentSelected.value.id) {
+          advisoryStore.getIfStudentIsEnrolledAtThisHour(scheduleEventId, selectedDate, selectedTimeStart, newAdvisory.value.studentAccount);
+        }
+      }
+    }
+  );
+
+  watch(
     () => newAdvisory.value.studentAccount,
     (studentAccount) => {
       if (studentAccount) {
+        const scheduleEventId = eventSelected.value.id;
+        const selectedDate = moment(eventSelected.value.start).format('Y-MM-DD');
+        const selectedTimeStart = `${newAdvisory.value.selectedHour.timeStart.hours}:${newAdvisory.value.selectedHour.timeStart.minutes}:00`;
+        advisoryStore.getIfStudentIsEnrolledAtThisHour(scheduleEventId, selectedDate, selectedTimeStart, studentAccount);
         advisoryStore.getStudent(studentAccount);
       }
     }
@@ -126,58 +157,60 @@
     return {
       ...options.value,
       eventClick: async ({ event }) => {
-        await calendarStore.getEventData(event.id, moment);
+        if (!event.extendedProps.type) {
+          await calendarStore.getEventData(event.id, moment);
 
-        possibleHoursToRegister.value = [];
-        newAdvisory.value.event = eventSelected.value;
-        const eventDateStart = moment(event._instance.range.start).format('Y-MM-DD');
-        const eventDateEnd = moment(event._instance.range.end).format('Y-MM-DD');
-        const eventTimeStart = moment.utc(event._instance.range.start).format('HH:mm:ss');
-        const eventTimeEnd = moment.utc(event._instance.range.end).format('HH:mm:ss');
-        const eventSelectedTimeEndHours = eventSelected.value.extendedProps.timeEnd.hours;
-        const eventSelectedTimeStartHours = eventSelected.value.extendedProps.timeStart.hours;
-        const eventSelectedTimeStartMinutes = eventSelected.value.extendedProps.timeStart.minutes;
-        const eventSelectedTimeEndMinutes = eventSelected.value.extendedProps.timeEnd.minutes;
-        const eventSelectedAdvisorId = eventSelected.value.extendedProps.advisor.id;
+          possibleHoursToRegister.value = [];
+          newAdvisory.value.event = eventSelected.value;
+          const eventDateStart = moment(event._instance.range.start).format('Y-MM-DD');
+          const eventDateEnd = moment(event._instance.range.end).format('Y-MM-DD');
+          const eventTimeStart = moment.utc(event._instance.range.start).format('HH:mm:ss');
+          const eventTimeEnd = moment.utc(event._instance.range.end).format('HH:mm:ss');
+          const eventSelectedTimeEndHours = eventSelected.value.extendedProps.timeEnd.hours;
+          const eventSelectedTimeStartHours = eventSelected.value.extendedProps.timeStart.hours;
+          const eventSelectedTimeStartMinutes = eventSelected.value.extendedProps.timeStart.minutes;
+          const eventSelectedTimeEndMinutes = eventSelected.value.extendedProps.timeEnd.minutes;
+          const eventSelectedAdvisorId = eventSelected.value.extendedProps.advisor.id;
 
-        eventSelected.value.start = `${eventDateStart}T${eventTimeStart}`;
-        eventSelected.value.end = `${eventDateEnd}T${eventTimeEnd}`;
+          eventSelected.value.start = `${eventDateStart}T${eventTimeStart}`;
+          eventSelected.value.end = `${eventDateEnd}T${eventTimeEnd}`;
 
-        const eventSelectedTotalHours = eventSelectedTimeEndHours - eventSelectedTimeStartHours;
+          const eventSelectedTotalHours = eventSelectedTimeEndHours - eventSelectedTimeStartHours;
 
-        for(let i = 0; i < eventSelectedTotalHours; i++) {
-          const workshopInHourSchedule = workshopsFetched.value.find(
-            workshop => workshop.start == `${eventDateStart} ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : eventSelectedTimeStartMinutes}:00`
-              && workshop.userId == eventSelectedAdvisorId
-          );
+          for(let i = 0; i < eventSelectedTotalHours; i++) {
+            const workshopInHourSchedule = workshopsFetched.value.find(
+              workshop => workshop.start == `${eventDateStart} ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : eventSelectedTimeStartMinutes}:00`
+                && workshop.userId == eventSelectedAdvisorId
+            );
 
-          if (!workshopInHourSchedule) {
-            const option = {
-              text: `
-                De ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : '30'}
-                a ${eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))}:${eventSelectedTimeEndMinutes == 0 ? '00' : eventSelectedTimeEndMinutes}
-              `,
-              value: {
-                timeStart: {
-                  hours: moment(`${eventDateStart} ${(eventSelectedTimeStartHours + i)}:00:00`).format('HH'),
-                  minutes: eventSelectedTimeStartMinutes == 0
-                    ? '00'
-                    : eventSelectedTimeStartMinutes
+            if (!workshopInHourSchedule) {
+              const option = {
+                text: `
+                  De ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : '30'}
+                  a ${eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))}:${eventSelectedTimeEndMinutes == 0 ? '00' : eventSelectedTimeEndMinutes}
+                `,
+                value: {
+                  timeStart: {
+                    hours: moment(`${eventDateStart} ${(eventSelectedTimeStartHours + i)}:00:00`).format('HH'),
+                    minutes: eventSelectedTimeStartMinutes == 0
+                      ? '00'
+                      : eventSelectedTimeStartMinutes
+                  },
+                  timeEnd: {
+                    hours: moment(`${eventDateEnd} ${(eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1)))}:00:00`).format('HH'),
+                    minutes: eventSelectedTimeEndMinutes == 0
+                      ? '00'
+                      : eventSelectedTimeEndMinutes
+                  }
                 },
-                timeEnd: {
-                  hours: moment(`${eventDateEnd} ${(eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1)))}:00:00`).format('HH'),
-                  minutes: eventSelectedTimeEndMinutes == 0
-                    ? '00'
-                    : eventSelectedTimeEndMinutes
-                }
-              },
-            };
+              };
 
-            if (i === 0) {
-              newAdvisory.value.selectedHour = option.value;
+              if (i === 0) {
+                newAdvisory.value.selectedHour = option.value;
+              }
+
+              possibleHoursToRegister.value.push(option);
             }
-
-            possibleHoursToRegister.value.push(option);
           }
         }
       }

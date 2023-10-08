@@ -9,7 +9,9 @@ export const useAdvisoryStore = defineStore('advisory', {
       selectedHour: {},
       studentAccount: ''
     },
-    studentSelected: {}
+    studentSelected: {},
+    selectedHourQuote: 0,
+    studentIsEnrolledAtThisHour: false
   }),
   actions: {
     async getStudent(studentAccount) {
@@ -28,6 +30,25 @@ export const useAdvisoryStore = defineStore('advisory', {
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;
+      }
+    },
+    async getAdvisoryDisponibility(scheduleEventId, selectedDate, selectedTimeStart) {
+      useLoaderStore().loading = true;
+
+      try {
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisories/${scheduleEventId}/${selectedDate}/${selectedTimeStart}/disponibility`);
+        this.selectedHourQuote = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
+    async getIfStudentIsEnrolledAtThisHour(scheduleEventId, selectedDate, selectedTimeStart, studentAccount) {
+      try {
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisories/${scheduleEventId}/${selectedDate}/${selectedTimeStart}/disponibility/${studentAccount}`);
+        this.studentIsEnrolledAtThisHour = data.id ? true : false;
+      } catch (error) {
+        console.log(error);
       }
     },
     clearNewAdvisory() {
