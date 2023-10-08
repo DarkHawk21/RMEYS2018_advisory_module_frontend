@@ -27,7 +27,6 @@
             </select>
           </div>
 
-          {{ eventSelected.extendedProps.recurrence }}
           <div style="margin-bottom: 20px">
             <label class="form_label_control" style="margin-bottom: 20px">Repetir el</label>
 
