@@ -153,6 +153,36 @@ export const useCalendarStore = defineStore('calendar', {
         useLoaderStore().loading = false;
       }
     },
+    async getAllWorkshops() {
+      useLoaderStore().loading = true;
+      this.options.events = [];
+
+      try {
+        const { data } = await axios.get(`http://localhost:8000/api/v1/workshops`);
+        this.workshopsFetched = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
+    async getWorkshopsByAdvisor(advisorId) {
+      useLoaderStore().loading = true;
+      this.options.events = [];
+
+      try {
+        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${advisorId}/workshops`);
+        this.workshopsFetched = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
+    buildArrayOfEventsToCalendar() {
+      this.options.events = [
+        ...this.eventsFetched,
+        ...this.workshopsFetched
+      ];
+    },
     clearEventSelected() {
       this.eventSelected = {};
     },
@@ -190,35 +220,5 @@ export const useCalendarStore = defineStore('calendar', {
         }
       };
     },
-    async getAllWorkshops() {
-      useLoaderStore().loading = true;
-      this.options.events = [];
-
-      try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/workshops`);
-        this.workshopsFetched = data;
-        useLoaderStore().loading = false;
-      } catch (error) {
-        useLoaderStore().loading = false;
-      }
-    },
-    async getWorkshopsByAdvisor(advisorId) {
-      useLoaderStore().loading = true;
-      this.options.events = [];
-
-      try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${advisorId}/workshops`);
-        this.workshopsFetched = data;
-        useLoaderStore().loading = false;
-      } catch (error) {
-        useLoaderStore().loading = false;
-      }
-    },
-    buildArrayOfEventsToCalendar() {
-      this.options.events = [
-        ...this.eventsFetched,
-        ...this.workshopsFetched
-      ];
-    }
   }
 });

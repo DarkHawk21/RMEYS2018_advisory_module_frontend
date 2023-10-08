@@ -55,10 +55,6 @@
       <div class="student_container" v-if="newAdvisory.studentAccount && !studentSelected.id">
         <p>Alumno no encontrado.</p>
       </div>
-
-      <template v-if="studentIsEnrolledAtThisHour">
-        <h5 class="max_selected align_center">Ya estás inscrito en este horario.</h5>
-      </template>
     </div>
 
     <div class="card_footer">
@@ -67,6 +63,12 @@
         v-if="studentSelected.id && !studentIsEnrolledAtThisHour"
         @click="buttonReserveClicked"
       >Inscribirse</button>
+
+      <button
+        class="btn w_100"
+        v-if="studentSelected.id && studentIsEnrolledAtThisHour && !studentHasCheckInAtThisHour"
+        @click="buttonCheckInClicked"
+      >Registrar Entrada</button>
     </div>
   </section>
 </template>
@@ -85,7 +87,13 @@
   const { options, eventSelected, workshopsFetched } = storeToRefs(calendarStore);
 
   const advisoryStore = useAdvisoryStore();
-  const { newAdvisory, studentSelected, selectedHourQuote, studentIsEnrolledAtThisHour } = storeToRefs(advisoryStore);
+  const {
+    newAdvisory,
+    studentSelected,
+    selectedHourQuote,
+    studentIsEnrolledAtThisHour,
+    studentHasCheckInAtThisHour
+  } = storeToRefs(advisoryStore);
 
   const possibleHoursToRegister = ref([]);
 
@@ -109,6 +117,27 @@
     });
   };
 
+  const buttonCheckInClicked = async () => {
+    newAdvisory.value.checkIn = {
+      date: moment().format('Y-MM-DD'),
+      timeStart: moment().format('HH:mm:ss')
+    };
+
+    await advisoryStore.checkInStudent();
+
+    await Swal.fire({
+      timer: 5000,
+      icon: 'success',
+      timerProgressBar: true,
+      showCancelButton: false,
+      showConfirmButton: false,
+      title: '¡Adelante!',
+      text: 'No olvides registrar tu salida cuando termines tu estancia en la Mediateca.'
+    });
+
+    clearEventSelected();
+  };
+
   const clearEventSelected = () => {
     calendarStore.clearEventSelected();
     advisoryStore.clearNewAdvisory();
@@ -126,8 +155,8 @@
 
   watch(
     () => newAdvisory.value.selectedHour,
-    (selectedHour) => {
-      if (selectedHour) {
+    async (selectedHour) => {
+      if (selectedHour.timeStart) {
         const scheduleEventId = eventSelected.value.id;
         const selectedDate = moment(eventSelected.value.start).format('Y-MM-DD');
         const selectedTimeStart = `${selectedHour.timeStart.hours}:${selectedHour.timeStart.minutes}:00`;
@@ -135,6 +164,19 @@
 
         if (studentSelected.value.id) {
           advisoryStore.getIfStudentIsEnrolledAtThisHour(scheduleEventId, selectedDate, selectedTimeStart, newAdvisory.value.studentAccount);
+          await advisoryStore.getIfStudentHasCheckInAtThisHour(scheduleEventId, selectedDate, selectedTimeStart, newAdvisory.value.studentAccount);
+
+          if (studentHasCheckInAtThisHour.value) {
+            Swal.fire({
+              timer: 5000,
+              icon: 'success',
+              timerProgressBar: true,
+              showCancelButton: false,
+              showConfirmButton: false,
+              title: '¡Adelante!',
+              text: 'Ya tenemos registrada tu entrada a esta asesoría.\nNo olvides registrar tu salida cuando termines tu estancia en la Mediateca.'
+            });
+          }
         }
       }
     }
@@ -142,13 +184,26 @@
 
   watch(
     () => newAdvisory.value.studentAccount,
-    (studentAccount) => {
-      if (studentAccount) {
+    async (studentAccount) => {
+      if (studentAccount && studentAccount.length == 9) {
         const scheduleEventId = eventSelected.value.id;
         const selectedDate = moment(eventSelected.value.start).format('Y-MM-DD');
         const selectedTimeStart = `${newAdvisory.value.selectedHour.timeStart.hours}:${newAdvisory.value.selectedHour.timeStart.minutes}:00`;
         advisoryStore.getIfStudentIsEnrolledAtThisHour(scheduleEventId, selectedDate, selectedTimeStart, studentAccount);
         advisoryStore.getStudent(studentAccount);
+        await advisoryStore.getIfStudentHasCheckInAtThisHour(scheduleEventId, selectedDate, selectedTimeStart, studentAccount);
+
+        if (studentHasCheckInAtThisHour.value) {
+          Swal.fire({
+            timer: 5000,
+            icon: 'success',
+            timerProgressBar: true,
+            showCancelButton: false,
+            showConfirmButton: false,
+            title: '¡Adelante!',
+            text: 'Ya tenemos registrada tu entrada a esta asesoría.\nNo olvides registrar tu salida cuando termines tu estancia en la Mediateca.'
+          });
+        }
       }
     }
   );
