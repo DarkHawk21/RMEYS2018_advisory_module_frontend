@@ -1,13 +1,11 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import { useLoaderStore } from './LoaderStore';
-import adviserAdvicesByDay from './db/adviserAdvicesByDay.json';
 
 export const useAdviserStore = defineStore('adviser', {
   state: () => ({
     adviserSelected: {},
     advisers: [],
-    adviserAdvicesByDay: [],
     filters: {
       adviser: null
     }
@@ -34,9 +32,6 @@ export const useAdviserStore = defineStore('adviser', {
       } catch (error) {
         useLoaderStore().loading = false;
       }
-    },
-    getAllAdvicesByAdviserByDay() {
-      this.adviserAdvicesByDay = adviserAdvicesByDay;
     },
     clearSelection() {
       this.adviserSelected = {};
