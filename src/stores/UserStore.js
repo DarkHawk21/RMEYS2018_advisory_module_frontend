@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { _TOKEN } from '../config';
 import { defineStore } from 'pinia';
+import { _API_URL } from '../config';
 import { useLoaderStore } from './LoaderStore';
 import Swal from 'sweetalert2/dist/sweetalert2';
 
@@ -14,7 +15,7 @@ export const useUserStore = defineStore('user', {
       useLoaderStore().loading = true;
 
       try {
-        const { data } = await axios.post('http://localhost:8000/api/v1/login', loginData);
+        const { data } = await axios.post(`${_API_URL}/login`, loginData);
         localStorage.setItem(_TOKEN, data.access_token);
         this.token = data.access_token;
         axios.defaults.headers.common.Authorization = `Bearer ${data.access_token}`;
@@ -41,7 +42,7 @@ export const useUserStore = defineStore('user', {
       useLoaderStore().loading = true;
 
       try {
-        const response = await axios.post('http://localhost:8000/api/v1/logout', this.token);
+        const response = await axios.post(`${_API_URL}/logout`, this.token);
         localStorage.removeItem(_TOKEN);
         this.token = null;
         axios.defaults.headers.common.Authorization = '';

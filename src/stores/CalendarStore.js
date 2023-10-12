@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { defineStore } from "pinia";
+import { _API_URL } from '../config';
 import rrulePlugin from '@fullcalendar/rrule';
 import { useLoaderStore } from './LoaderStore';
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -81,7 +82,7 @@ export const useCalendarStore = defineStore('calendar', {
       this.options.events = [];
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/schedule`);
+        const { data } = await axios.get(`${_API_URL}/advisors/schedule`);
         this.eventsFetched = data;
         useLoaderStore().loading = false;
       } catch (error) {
@@ -93,7 +94,7 @@ export const useCalendarStore = defineStore('calendar', {
       this.options.events = [];
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${advisorId}/schedule`);
+        const { data } = await axios.get(`${_API_URL}/advisors/${advisorId}/schedule`);
         this.eventsFetched = data;
         useLoaderStore().loading = false;
       } catch (error) {
@@ -104,7 +105,7 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/schedule/${eventId}`);
+        const { data } = await axios.get(`${_API_URL}/schedule/${eventId}`);
 
         this.eventSelected = {
           ...data,
@@ -127,7 +128,7 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        await axios.post(`http://localhost:8000/api/v1/schedule`, this.newEvent);
+        await axios.post(`${_API_URL}/schedule`, this.newEvent);
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;
@@ -137,7 +138,7 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        await axios.put(`http://localhost:8000/api/v1/schedule/${this.eventSelected.id}`, this.eventSelected);
+        await axios.put(`${_API_URL}/schedule/${this.eventSelected.id}`, this.eventSelected);
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;
@@ -147,7 +148,7 @@ export const useCalendarStore = defineStore('calendar', {
       useLoaderStore().loading = true;
 
       try {
-        await axios.delete(`http://localhost:8000/api/v1/schedule/${this.eventSelected.id}`);
+        await axios.delete(`${_API_URL}/schedule/${this.eventSelected.id}`);
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;
@@ -158,7 +159,7 @@ export const useCalendarStore = defineStore('calendar', {
       this.options.events = [];
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/workshops`);
+        const { data } = await axios.get(`${_API_URL}/workshops`);
         this.workshopsFetched = data;
         useLoaderStore().loading = false;
       } catch (error) {
@@ -170,7 +171,7 @@ export const useCalendarStore = defineStore('calendar', {
       this.options.events = [];
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${advisorId}/workshops`);
+        const { data } = await axios.get(`${_API_URL}/advisors/${advisorId}/workshops`);
         this.workshopsFetched = data;
         useLoaderStore().loading = false;
       } catch (error) {

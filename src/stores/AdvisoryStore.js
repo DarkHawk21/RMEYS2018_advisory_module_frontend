@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
+import { _API_URL } from '../config';
 import { useLoaderStore } from './LoaderStore';
 
 export const useAdvisoryStore = defineStore('advisory', {
@@ -20,7 +21,7 @@ export const useAdvisoryStore = defineStore('advisory', {
       useLoaderStore().loading = true;
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/advisors/${advisorId}/advisories`);
+        const { data } = await axios.get(`${_API_URL}/advisors/${advisorId}/advisories`);
         this.advisories = data;
         useLoaderStore().loading = false;
       } catch (error) {
@@ -29,7 +30,7 @@ export const useAdvisoryStore = defineStore('advisory', {
     },
     async getStudent(studentAccount) {
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/students/${studentAccount}`);
+        const { data } = await axios.get(`${_API_URL}/students/${studentAccount}`);
         this.studentSelected = data;
       } catch (error) {
         console.log(error);
@@ -39,7 +40,7 @@ export const useAdvisoryStore = defineStore('advisory', {
       useLoaderStore().loading = true;
 
       try {
-        await axios.post(`http://localhost:8000/api/v1/advisories`, this.newAdvisory);
+        await axios.post(`${_API_URL}/advisories`, this.newAdvisory);
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;
@@ -49,7 +50,7 @@ export const useAdvisoryStore = defineStore('advisory', {
       useLoaderStore().loading = true;
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/advisories/${scheduleEventId}/${selectedDate}/${selectedTimeStart}/disponibility`);
+        const { data } = await axios.get(`${_API_URL}/advisories/${scheduleEventId}/${selectedDate}/${selectedTimeStart}/disponibility`);
         this.selectedHourQuote = data;
         useLoaderStore().loading = false;
       } catch (error) {
@@ -58,7 +59,7 @@ export const useAdvisoryStore = defineStore('advisory', {
     },
     async getIfStudentIsEnrolledAtThisHour(scheduleEventId, selectedDate, selectedTimeStart, studentAccount) {
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/advisories/${scheduleEventId}/${selectedDate}/${selectedTimeStart}/disponibility/${studentAccount}`);
+        const { data } = await axios.get(`${_API_URL}/advisories/${scheduleEventId}/${selectedDate}/${selectedTimeStart}/disponibility/${studentAccount}`);
         this.studentIsEnrolledAtThisHour = data.id ? true : false;
       } catch (error) {
         console.log(error);
@@ -66,7 +67,7 @@ export const useAdvisoryStore = defineStore('advisory', {
     },
     async getIfStudentHasCheckInAtThisHour(scheduleEventId, selectedDate, selectedTimeStart, studentAccount) {
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/v1/advisories/${scheduleEventId}/${selectedDate}/${selectedTimeStart}/checkin/${studentAccount}`);
+        const { data } = await axios.get(`${_API_URL}/advisories/${scheduleEventId}/${selectedDate}/${selectedTimeStart}/checkin/${studentAccount}`);
         this.studentHasCheckInAtThisHour = data.id ? true : false;
       } catch (error) {
         console.log(error);
@@ -76,7 +77,7 @@ export const useAdvisoryStore = defineStore('advisory', {
       useLoaderStore().loading = true;
 
       try {
-        await axios.post(`http://localhost:8000/api/v1/advisories/checkin`, this.newAdvisory);
+        await axios.post(`${_API_URL}/advisories/checkin`, this.newAdvisory);
         useLoaderStore().loading = false;
       } catch (error) {
         useLoaderStore().loading = false;
