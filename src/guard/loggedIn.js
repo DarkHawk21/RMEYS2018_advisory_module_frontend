@@ -29,20 +29,15 @@ export default (to, from, next) => {
         default:
           next('/');
       }
+
     } else {
       next();
     }
   } catch (error) {
     localStorage.removeItem(_TOKEN);
-    const loginpath = window.location.pathname;
 
     isNotProtected
       ? next()
-      : next({
-        name: 'login',
-        query: {
-          from: loginpath
-        }
-      });
+      : next({ name: 'login' });
   }
 };

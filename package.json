@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "vite build --base=/asesorias/",
     "preview": "vite preview"
   },
   "dependencies": {
