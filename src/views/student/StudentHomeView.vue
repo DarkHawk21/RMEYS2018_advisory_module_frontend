@@ -236,30 +236,43 @@
 
           const eventSelectedTotalHours = eventSelectedTimeEndHours - eventSelectedTimeStartHours;
 
+          const advisorWorkshops = workshopsFetched.value.filter(workshop => workshop.userId == eventSelectedAdvisorId);
+
           for(let i = 0; i < eventSelectedTotalHours; i++) {
-            const workshopInHourSchedule = workshopsFetched.value.find(
-              workshop => workshop.start == `${eventDateStart} ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : eventSelectedTimeStartMinutes}:00`
-                && workshop.userId == eventSelectedAdvisorId
+            const formatedHourStart = (eventSelectedTimeStartHours + i) < 10
+              ? `0${eventSelectedTimeStartHours + i}`
+              : `${eventSelectedTimeStartHours + i}`;
+
+            const formatedMinutesStart = eventSelectedTimeStartMinutes == 0
+              ? '00'
+              : eventSelectedTimeStartMinutes;
+
+            const formatedHourEnd = (eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))) < 10
+              ? `0${eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))}`
+              : `${eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))}`;
+
+            const formatedMinutesEnd = eventSelectedTimeEndMinutes == 0
+              ? '00'
+              : eventSelectedTimeEndMinutes;
+
+            const workshopInHourSchedule = advisorWorkshops.find(
+              workshop => workshop.start == `${eventDateStart} ${formatedHourStart}:${formatedMinutesStart}:00`
             );
 
             if (!workshopInHourSchedule) {
               const option = {
                 text: `
-                  De ${eventSelectedTimeStartHours + i}:${eventSelectedTimeStartMinutes == 0 ? '00' : '30'}
-                  a ${eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))}:${eventSelectedTimeEndMinutes == 0 ? '00' : eventSelectedTimeEndMinutes}
+                  De ${formatedHourStart}:${formatedMinutesStart}
+                  a ${formatedHourEnd}:${formatedMinutesEnd}
                 `,
                 value: {
                   timeStart: {
-                    hours: moment(`${eventDateStart} ${(eventSelectedTimeStartHours + i)}:00:00`).format('HH'),
-                    minutes: eventSelectedTimeStartMinutes == 0
-                      ? '00'
-                      : eventSelectedTimeStartMinutes
+                    hours: formatedHourStart,
+                    minutes: formatedMinutesStart
                   },
                   timeEnd: {
-                    hours: moment(`${eventDateEnd} ${(eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1)))}:00:00`).format('HH'),
-                    minutes: eventSelectedTimeEndMinutes == 0
-                      ? '00'
-                      : eventSelectedTimeEndMinutes
+                    hours: formatedHourEnd,
+                    minutes: formatedMinutesEnd
                   }
                 },
               };
