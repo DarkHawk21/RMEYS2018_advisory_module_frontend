@@ -41,6 +41,7 @@
         </select>
       </div>
 
+      <router-link class="btn" style="text-decoration:none;" to="/admin/advisors">Asesorias</router-link>
       <button class="btn" @click="searchAdviserEvents" v-if="filters.adviser">Buscar</button>
     </div>
 

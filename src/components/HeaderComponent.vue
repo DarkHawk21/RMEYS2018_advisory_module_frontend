@@ -25,6 +25,7 @@
       case 'adviser-home':
         return 'Asesor';
       case 'admin-home':
+      case 'admin-advisors':
         return 'Administrador / Módulo';
       default:
         return 'Alumno';
@@ -37,6 +38,8 @@
         return 'Asesorías en tu agenda';
       case 'admin-home':
         return 'Disponibilidad de asesores';
+      case 'admin-advisors':
+        return 'Asesorías en la agenda de los asesores';
       default:
         return 'Calendario de Asesorías';
     }

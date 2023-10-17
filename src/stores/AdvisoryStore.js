@@ -28,6 +28,17 @@ export const useAdvisoryStore = defineStore('advisory', {
         useLoaderStore().loading = false;
       }
     },
+    async getAll() {
+      useLoaderStore().loading = true;
+
+      try {
+        const { data } = await axios.get(`${_API_URL}/advisors/advisories`);
+        this.advisories = data;
+        useLoaderStore().loading = false;
+      } catch (error) {
+        useLoaderStore().loading = false;
+      }
+    },
     async getStudent(studentAccount) {
       try {
         const { data } = await axios.get(`${_API_URL}/students/${studentAccount}`);

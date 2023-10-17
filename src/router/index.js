@@ -7,6 +7,7 @@ import LoginView from '../views/LoginView.vue';
 import StudentHomeView from '../views/student/StudentHomeView.vue';
 import AdviserHomeView from '../views/adviser/AdviserHomeView.vue';
 import AdminHomeView from '../views/admin/AdminHomeView.vue';
+import AdminAdvisors from '../views/admin/AdminAdvisors.vue';
 
 const routes = [
   {
@@ -42,7 +43,17 @@ const routes = [
           rolesCanEnter: [
             'admin'
           ]
-        }
+        },
+      },
+      {
+        path: '/admin/advisors',
+        name: 'admin-advisors',
+        component: AdminAdvisors,
+        meta: {
+          rolesCanEnter: [
+            'admin'
+          ]
+        },
       }
     ]
   },
