@@ -72,7 +72,7 @@
     </div>
   </section>
 
-  <a href="http://localhost/PlataformaRMEYS2018" id="btnBackToRMEYS">Regresar</a>
+  <a href="http://132.248.99.56/PlataformaRMEYS2018" id="btnBackToRMEYS">Regresar</a>
 </template>
 
 <script setup>
