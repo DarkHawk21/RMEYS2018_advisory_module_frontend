@@ -37,8 +37,8 @@
   const userStore = useUserStore();
   const { token } = storeToRefs(userStore);
 
-  const email = ref("samuel.hernandez@enp.unam.mx");
-  const password = ref("HEBS641218");
+  const email = ref("");
+  const password = ref("");
 
   const canLogin = computed(() => {
     return email.value && password.value;
