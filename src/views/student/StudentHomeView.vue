@@ -14,7 +14,7 @@
       </div>
 
       <div class="adviser_img_container">
-        <img :src="'/images/' + eventSelected.extendedProps.advisor.img" alt="Foto de perfil del asesor"/>
+        <img :src="'/images/advisers/' + (eventSelected.extendedProps.advisor.img ? eventSelected.extendedProps.advisor.img : 'profile.png')" alt="Foto de perfil del asesor"/>
       </div>
 
       <h5 class="adviser_name align_center">{{ eventSelected.extendedProps.advisor.name }}</h5>
@@ -24,37 +24,43 @@
     <div class="card_body">
       <h5 class="day_selected align_center">{{ selectedDay }}</h5>
 
-      <label class="form_label_control">Selecciona una hora:</label>
+      <label class="form_label_control">Hora seleccionada:</label>
 
-      <select class="form_control" v-model="newAdvisory.selectedHour">
-        <option v-for="hour in possibleHoursToRegister" :key="hour" :value="hour.value">{{ hour.text }}</option>
-      </select>
+      <input type="text" class="form_control" :value="newAdvisory.selectedHour.text" readonly>
 
-      <template v-if="selectedHourQuote">
-        <h5 class="max_selected align_center">Quedan {{ selectedHourQuote }} lugares disponibles</h5>
+      <template v-if="!workshopInHourSchedule">
+        <template v-if="selectedHourQuote">
+          <h5 class="max_selected align_center">Quedan {{ selectedHourQuote }} lugares disponibles</h5>
 
-        <label class="form_label_control">No. de cuenta:</label>
+          <label class="form_label_control">No. de cuenta:</label>
 
-        <input
-          type="text"
-          class="form_control"
-          placeholder="número de cuenta"
-          v-model="newAdvisory.studentAccount"
-        />
+          <input
+            type="text"
+            class="form_control"
+            placeholder="número de cuenta"
+            v-model="newAdvisory.studentAccount"
+          />
+        </template>
+
+        <template v-else>
+          <h5 class="max_selected align_center">¡Ups! El horario que elegiste está lleno, por favor intenta con uno diferente.</h5>
+        </template>
+
+        <div class="student_container" v-if="studentSelected.id">
+          <p>{{ `${studentSelected.nombre} ${studentSelected.appat} ${studentSelected.apmat}` }}</p>
+          <p>Grupo {{ `${studentSelected.grupo}` }}</p>
+        </div>
+
+        <div class="student_container" v-if="newAdvisory.studentAccount && !studentSelected.id">
+          <p>Alumno no encontrado.</p>
+        </div>
       </template>
 
       <template v-else>
-        <h5 class="max_selected align_center">¡Ups! El horario que elegiste está lleno, por favor intenta con uno diferente.</h5>
+        <h5 class="max_selected align_left">El profesor se encuentra impartiendo el taller:</h5>
+        <h5 class="max_selected align_center" style="background:#033b6b;color:#e89f15;padding: 10px 20px;">{{ workshopInHourSchedule.workshop_name }}</h5>
+        <h5 class="max_selected align_left">Por favor intenta con un horario diferente.</h5>
       </template>
-
-      <div class="student_container" v-if="studentSelected.id">
-        <p>{{ `${studentSelected.nombre} ${studentSelected.appat} ${studentSelected.apmat}` }}</p>
-        <p>Grupo {{ `${studentSelected.grupo}` }}</p>
-      </div>
-
-      <div class="student_container" v-if="newAdvisory.studentAccount && !studentSelected.id">
-        <p>Alumno no encontrado.</p>
-      </div>
     </div>
 
     <div class="card_footer">
@@ -97,7 +103,7 @@
     studentHasCheckInAtThisHour
   } = storeToRefs(advisoryStore);
 
-  const possibleHoursToRegister = ref([]);
+  const workshopInHourSchedule = ref(null);
 
   onMounted(async () => {
     await calendarStore.getAllAdvisersDisponibility();
@@ -146,7 +152,6 @@
     calendarStore.clearEventSelected();
     advisoryStore.clearNewAdvisory();
     advisoryStore.clearStudentSelected();
-    possibleHoursToRegister.value = [];
   };
 
   const selectedDay = computed(() => {
@@ -218,9 +223,8 @@
       eventClick: async ({ event }) => {
         if (!event.extendedProps.type) {
           await calendarStore.getEventData(event.id, moment);
-
-          possibleHoursToRegister.value = [];
           newAdvisory.value.event = eventSelected.value;
+
           const eventDateStart = moment(event._instance.range.start).format('Y-MM-DD');
           const eventDateEnd = moment(event._instance.range.end).format('Y-MM-DD');
           const eventTimeStart = moment.utc(event._instance.range.start).format('HH:mm:ss');
@@ -234,54 +238,46 @@
           eventSelected.value.start = `${eventDateStart}T${eventTimeStart}`;
           eventSelected.value.end = `${eventDateEnd}T${eventTimeEnd}`;
 
-          const eventSelectedTotalHours = eventSelectedTimeEndHours - eventSelectedTimeStartHours;
-
           const advisorWorkshops = workshopsFetched.value.filter(workshop => workshop.userId == eventSelectedAdvisorId);
 
-          for(let i = 0; i < eventSelectedTotalHours; i++) {
-            const formatedHourStart = (eventSelectedTimeStartHours + i) < 10
-              ? `0${eventSelectedTimeStartHours + i}`
-              : `${eventSelectedTimeStartHours + i}`;
+          const formatedHourStart = eventSelectedTimeStartHours < 10
+            ? `0${eventSelectedTimeStartHours}`
+            : eventSelectedTimeStartHours;
 
-            const formatedMinutesStart = eventSelectedTimeStartMinutes == 0
-              ? '00'
-              : eventSelectedTimeStartMinutes;
+          const formatedMinutesStart = eventSelectedTimeStartMinutes < 10
+            ? `0${eventSelectedTimeStartMinutes}`
+            : eventSelectedTimeStartMinutes;
 
-            const formatedHourEnd = (eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))) < 10
-              ? `0${eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))}`
-              : `${eventSelectedTimeEndHours - (eventSelectedTotalHours - (i + 1))}`;
+          const formatedHourEnd = eventSelectedTimeEndHours < 10
+            ? `0${eventSelectedTimeEndHours}`
+            : eventSelectedTimeEndHours;
 
-            const formatedMinutesEnd = eventSelectedTimeEndMinutes == 0
-              ? '00'
-              : eventSelectedTimeEndMinutes;
+          const formatedMinutesEnd = eventSelectedTimeEndMinutes < 10
+            ? `0${eventSelectedTimeEndMinutes}`
+            : eventSelectedTimeEndMinutes;
 
-            const workshopInHourSchedule = advisorWorkshops.find(
-              workshop => workshop.start == `${eventDateStart} ${formatedHourStart}:${formatedMinutesStart}:00`
-            );
+          workshopInHourSchedule.value = advisorWorkshops.find(
+            workshop => {
+              const dateStart = `${eventDateStart} ${formatedHourStart}:${formatedMinutesStart}:00`;
+              const dateEnd = `${eventDateEnd} ${formatedHourEnd}:${formatedMinutesEnd}:00`;
+              const workshopStart = moment(workshop.start);
+              const workshopEnd = moment(workshop.end);
+              const startIsBetweenWorkshop = moment(dateStart).isBetween(workshopStart, workshopEnd);
+              const endIsBetweenWorkshop = moment(dateEnd).isBetween(workshopStart, workshopEnd);
 
-            if (!workshopInHourSchedule) {
-              const option = {
-                text: `
-                  De ${formatedHourStart}:${formatedMinutesStart}
-                  a ${formatedHourEnd}:${formatedMinutesEnd}
-                `,
-                value: {
-                  timeStart: {
-                    hours: formatedHourStart,
-                    minutes: formatedMinutesStart
-                  },
-                  timeEnd: {
-                    hours: formatedHourEnd,
-                    minutes: formatedMinutesEnd
-                  }
-                },
-              };
+              return startIsBetweenWorkshop || endIsBetweenWorkshop;
+            }
+          );
 
-              if (i === 0) {
-                newAdvisory.value.selectedHour = option.value;
-              }
-
-              possibleHoursToRegister.value.push(option);
+          newAdvisory.value.selectedHour = {
+            text: `De ${formatedHourStart}:${formatedMinutesStart} a ${formatedHourEnd}:${formatedMinutesEnd}`,
+            timeStart: {
+              hours: parseInt(formatedHourStart),
+              minutes: parseInt(formatedMinutesStart)
+            },
+            timeEnd: {
+              hours: parseInt(formatedHourEnd),
+              minutes: parseInt(formatedMinutesEnd)
             }
           }
         }

@@ -41,8 +41,10 @@
         </select>
       </div>
 
-      <router-link class="btn" style="text-decoration:none;" to="/admin/advisors">Asesorias</router-link>
-      <button class="btn" @click="searchAdviserEvents" v-if="filters.adviser">Buscar</button>
+      <div>
+        <router-link class="btn" style="text-decoration:none;" to="/admin/advisors">Asesorias</router-link>
+        <button class="btn" style="margin-left:10px;" @click="searchAdviserEvents" v-if="filters.adviser">Buscar</button>
+      </div>
     </div>
 
     <section class="calendar_container w_100">
@@ -58,7 +60,7 @@
       </div>
 
       <div class="adviser_img_container">
-        <img :src="'/images/' + adviserSelected.img" alt="Foto de perfil del asesor"/>
+        <img :src="'/images/advisers/' + (adviserSelected.img ? adviserSelected.img : 'profile.png')" alt="Foto de perfil del asesor"/>
       </div>
 
       <h5 class="adviser_name align_center">{{ adviserSelected.name }}</h5>
@@ -115,8 +117,8 @@
           };
 
           newEvent.value.extendedProps.timeEnd = {
-            hours: parseInt(newEvent.value.extendedProps.timeStart.hours) + 1,
-            minutes: parseInt(newEvent.value.extendedProps.timeStart.minutes),
+            hours: parseInt(moment.utc(date).add(moment.duration('00:50:00')).format('HH')),
+            minutes: parseInt(moment.utc(date).add(moment.duration('00:50:00')).format('mm')),
           };
 
           showModalAddEvent.value = true;
@@ -125,8 +127,10 @@
         }
       },
       eventClick: async ({ event }) => {
-        await calendarStore.getEventData(event.id, moment);
-        showModalEditEvent.value = true;
+        if (!event.extendedProps.type) {
+          await calendarStore.getEventData(event.id, moment);
+          showModalEditEvent.value = true;
+        }
       }
     };
   });

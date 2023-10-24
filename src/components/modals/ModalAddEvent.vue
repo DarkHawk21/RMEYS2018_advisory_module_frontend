@@ -26,29 +26,24 @@
               <label style="margin-right: 10px">De</label>
               <VueDatePicker
                 time-picker
-                v-model="newEvent.extendedProps.timeStart"
                 :teleport="true"
-                :minutesIncrement="30"
-                :minutes-grid-increment="30"
+                :minutesIncrement="10"
+                :minutes-grid-increment="10"
+                v-model="newEvent.extendedProps.timeStart"
                 :min-time="newEvent.minTimeStart"
                 :max-time="newEvent.maxTimeStart"
               />
 
               <label style="margin: 0 10px">a</label>
               <VueDatePicker
+                readonly
                 time-picker
-                v-model="newEvent.extendedProps.timeEnd"
                 :teleport="true"
-                :minutesIncrement="30"
-                :minutes-grid-increment="30"
-                :min-time="{
-                  hours: newEvent.minTimeStart.hours + 1,
-                  minutes: newEvent.minTimeStart.minutes,
-                }"
-                :max-time="{
-                  hours: newEvent.maxTimeStart.hours + 1,
-                  minutes: newEvent.maxTimeStart.minutes,
-                }"
+                :minutesIncrement="10"
+                :minutes-grid-increment="10"
+                v-model="newEvent.extendedProps.timeEnd"
+                :min-time="newEvent.minTimeStart"
+                :max-time="newEvent.maxTimeStart"
               />
             </div>
 
@@ -122,8 +117,20 @@
   };
 
   const saveNewEvent = async () => {
-    if (newEvent.value.extendedProps.timeStart.minutes != newEvent.value.extendedProps.timeEnd.minutes) {
-      alert("No se puede crear un evento en fracciones de 30 minutos.");
+    const startHoursToMinutes = newEvent.value.extendedProps.timeStart.hours * 60;
+    const startMinutes = newEvent.value.extendedProps.timeStart.minutes;
+    const endHoursToMinutes = newEvent.value.extendedProps.timeEnd.hours * 60;
+    const endMinutes = newEvent.value.extendedProps.timeEnd.minutes;
+    const startTotalMinutes = startHoursToMinutes + startMinutes;
+    const endTotalMinutes = endHoursToMinutes + endMinutes;
+
+    if (startTotalMinutes >= endTotalMinutes) {
+      alert("La hora de inicio debe ser menor a la hora de fin.");
+      return;
+    }
+
+    if (endTotalMinutes - startTotalMinutes < 50) {
+      alert("La duración mínima de una asesoría es de 50 minutos.");
       return;
     }
 
@@ -144,12 +151,24 @@
   };
 
   watch(
-    () => newEvent.value.timeStart,
+    () => newEvent.value.extendedProps.timeStart,
     (timeStart) => {
-      newEvent.value.timeEnd = {
-        hours: parseInt(timeStart.hours) + 1,
-        minutes: parseInt(timeStart.minutes),
-        seconds: parseInt(timeStart.seconds)
+      const minutes = timeStart.minutes + 50;
+
+      if (minutes >= 60) {
+        newEvent.value.extendedProps.timeEnd = {
+          hours: timeStart.hours + 1,
+          minutes: minutes - 60,
+          seconds: timeStart.seconds
+        };
+
+        return;
+      }
+
+      newEvent.value.extendedProps.timeEnd = {
+        hours: timeStart.hours,
+        minutes: minutes,
+        seconds: timeStart.seconds
       };
     }
   );

@@ -28,27 +28,22 @@
                 time-picker
                 v-model="eventSelected.extendedProps.timeStart"
                 :teleport="true"
-                :minutesIncrement="30"
-                :minutes-grid-increment="30"
+                :minutesIncrement="10"
+                :minutes-grid-increment="10"
                 :min-time="eventSelected.minTimeStart"
                 :max-time="eventSelected.maxTimeStart"
               />
 
               <label style="margin: 0 10px">a</label>
               <VueDatePicker
+                readonly
                 time-picker
-                v-model="eventSelected.extendedProps.timeEnd"
                 :teleport="true"
-                :minutesIncrement="30"
-                :minutes-grid-increment="30"
-                :min-time="{
-                  hours: eventSelected.minTimeStart.hours + 1,
-                  minutes: eventSelected.minTimeStart.minutes,
-                }"
-                :max-time="{
-                  hours: eventSelected.maxTimeStart.hours + 1,
-                  minutes: eventSelected.maxTimeStart.minutes,
-                }"
+                :minutesIncrement="10"
+                :minutes-grid-increment="10"
+                v-model="eventSelected.extendedProps.timeEnd"
+                :min-time="eventSelected.minTimeStart"
+                :max-time="eventSelected.maxTimeStart"
               />
             </div>
 
@@ -116,8 +111,20 @@
   };
 
   const updateEvent = async () => {
-    if (eventSelected.value.extendedProps.timeStart.minutes != eventSelected.value.extendedProps.timeEnd.minutes) {
-      alert("No se puede editar un evento en fracciones de 30 minutos.");
+    const startHoursToMinutes = eventSelected.value.extendedProps.timeStart.hours * 60;
+    const startMinutes = eventSelected.value.extendedProps.timeStart.minutes;
+    const endHoursToMinutes = eventSelected.value.extendedProps.timeEnd.hours * 60;
+    const endMinutes = eventSelected.value.extendedProps.timeEnd.minutes;
+    const startTotalMinutes = startHoursToMinutes + startMinutes;
+    const endTotalMinutes = endHoursToMinutes + endMinutes;
+
+    if (startTotalMinutes >= endTotalMinutes) {
+      alert("La hora de inicio debe ser menor a la hora de fin.");
+      return;
+    }
+
+    if (endTotalMinutes - startTotalMinutes < 50) {
+      alert("La duración mínima de una asesoría es de 50 minutos.");
       return;
     }
 

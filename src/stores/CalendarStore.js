@@ -13,13 +13,19 @@ export const useCalendarStore = defineStore('calendar', {
       locale: "es",
       firstDay: "1",
       weekends: false,
+      expandRows: true,
       allDaySlot: false,
       timeZone: "utc",
       nowIndicator: true,
       themeSystem: "standard",
-      slotMinTime: "07:00:00",
-      slotMaxTime: "21:00:00",
-      slotDuration: "00:30:00",
+      slotMinTime: "08:40:00",
+      slotMaxTime: "19:30:00",
+      slotDuration: "00:50:00",
+      slotLabelFormat: {
+        hour: '2-digit',
+        minute: '2-digit',
+        omitZeroMinute: false
+      },
       initialView: "timeGridWeek",
       plugins: [timeGridPlugin, dayGridPlugin, interactionPlugin, rrulePlugin],
       headerToolbar: {
@@ -65,12 +71,12 @@ export const useCalendarStore = defineStore('calendar', {
         }
       },
       minTimeStart: {
-        hours: 7,
-        minutes: 0
+        hours: 8,
+        minutes: 40
       },
       maxTimeStart: {
-        hours: 20,
-        minutes: 0
+        hours: 19,
+        minutes: 30
       }
     },
     eventsFetched: [],
@@ -110,12 +116,12 @@ export const useCalendarStore = defineStore('calendar', {
         this.eventSelected = {
           ...data,
           minTimeStart: {
-            hours: 7,
-            minutes: 0
+            hours: 8,
+            minutes: 40
           },
           maxTimeStart: {
-            hours: 20,
-            minutes: 0
+            hours: 19,
+            minutes: 30
           }
         };
 
@@ -212,12 +218,12 @@ export const useCalendarStore = defineStore('calendar', {
           }
         },
         minTimeStart: {
-          hours: 7,
-          minutes: 0
+          hours: 8,
+          minutes: 40
         },
         maxTimeStart: {
-          hours: 20,
-          minutes: 0
+          hours: 19,
+          minutes: 30
         }
       };
     },
