@@ -60,7 +60,7 @@
       </div>
 
       <div class="adviser_img_container">
-        <img :src="'/images/advisers/' + (adviserSelected.img ? adviserSelected.img : 'profile.png')" alt="Foto de perfil del asesor"/>
+        <img :src="'/asesorias/images/advisers/' + (adviserSelected.img ? adviserSelected.img : 'profile.png')" alt="Foto de perfil del asesor"/>
       </div>
 
       <h5 class="adviser_name align_center">{{ adviserSelected.name }}</h5>

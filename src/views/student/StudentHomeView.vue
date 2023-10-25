@@ -14,7 +14,7 @@
       </div>
 
       <div class="adviser_img_container">
-        <img :src="'/images/advisers/' + (eventSelected.extendedProps.advisor.img ? eventSelected.extendedProps.advisor.img : 'profile.png')" alt="Foto de perfil del asesor"/>
+        <img :src="'/asesorias/images/advisers/' + (eventSelected.extendedProps.advisor.img ? eventSelected.extendedProps.advisor.img : 'profile.png')" alt="Foto de perfil del asesor"/>
       </div>
 
       <h5 class="adviser_name align_center">{{ eventSelected.extendedProps.advisor.name }}</h5>
