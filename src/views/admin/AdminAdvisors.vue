@@ -19,6 +19,7 @@
               <tr v-for="student in advisory.students" :key="student.id">
                 <td class="align_left mw-300">{{ student.adviser }}</td>
                 <td class="align_left mw-300">{{ student.nombre }}</td>
+                <td class="align_left mw-300">{{ student.ncuenta }}</td>
                 <td class="align_center">{{ student.grupo }}</td>
               </tr>
             </tbody>
@@ -91,7 +92,8 @@
             nombre: `${asesoria.student.nombre} ${asesoria.student.appat} ${asesoria.student.apmat}`,
             grupo: asesoria.student.grupo,
             id: `${asesoria.selected_date}${asesoria.selected_time_start}${asesoria.student.ncuenta}`,
-            adviser: asesoria.schedule_event.title
+            adviser: asesoria.schedule_event.title,
+            ncuenta: asesoria.student.ncuenta
           }
         });
 
@@ -111,7 +113,8 @@
                   nombre: `${asesoria.student.nombre} ${asesoria.student.appat} ${asesoria.student.apmat}`,
                   grupo: asesoria.student.grupo,
                   id: `${asesoria.selected_date}${asesoria.selected_time_start}${asesoria.student.ncuenta}`,
-                  adviser: asesoria.schedule_event.title
+                  adviser: asesoria.schedule_event.title,
+                  ncuenta: asesoria.student.ncuenta
                 }
               }
             ]
@@ -133,7 +136,8 @@
             nombre: item.student.nombre,
             grupo: item.student.grupo,
             id: item.student.id,
-            adviser: item.student.adviser
+            adviser: item.student.adviser,
+            ncuenta: item.student.ncuenta
           });
 
           return acumulado;
@@ -149,7 +153,8 @@
                   nombre: item.student.nombre,
                   grupo: item.student.grupo,
                   id: item.student.id,
-                  adviser: item.student.adviser
+                  adviser: item.student.adviser,
+                  ncuenta: item.student.ncuenta
                 }
               ]
             }
