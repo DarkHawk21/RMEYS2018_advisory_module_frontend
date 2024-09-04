@@ -262,10 +262,14 @@
               const dateEnd = `${eventDateEnd} ${formatedHourEnd}:${formatedMinutesEnd}:00`;
               const workshopStart = moment(workshop.start);
               const workshopEnd = moment(workshop.end);
-              const startIsBetweenWorkshop = moment(dateStart).isBetween(workshopStart, workshopEnd);
-              const endIsBetweenWorkshop = moment(dateEnd).isBetween(workshopStart, workshopEnd);
 
-              return startIsBetweenWorkshop || endIsBetweenWorkshop;
+              const advisorStartIsLessThanWrorkshopStart = moment(dateStart).isBefore(workshopStart);
+              const advisorEndIsLessOrEqualThanWrorkshopStart = moment(dateEnd).isSameOrBefore(workshopStart);
+              const advisorStartIsGreaterOrEqualThanWrorkshopEnd = moment(dateStart).isSameOrAfter(workshopEnd);
+              const advisorEndIsGreaterThanWrorkshopEnd = moment(dateEnd).isAfter(workshopEnd);
+
+              return !((advisorStartIsLessThanWrorkshopStart && advisorEndIsLessOrEqualThanWrorkshopStart) ||
+                (advisorStartIsGreaterOrEqualThanWrorkshopEnd && advisorEndIsGreaterThanWrorkshopEnd));
             }
           );
 
